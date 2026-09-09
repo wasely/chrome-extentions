@@ -13,4 +13,4 @@ Executed locally on Windows for version 1.0.0:
 
 The ZIP is a local review candidate, not a public download or store-ready release. It fails closed while email sign-in is unconfigured. Tests use explicit fixtures and mocked browser/service boundaries; no production authentication bypass exists.
 
-Remaining live tests are in [RELEASE_STATUS.md](RELEASE_STATUS.md). GitHub CI outcomes must be checked separately after pushing. Source/build checks do not establish mobile support or real provider compatibility.
+Remaining live tests are in [RELEASE_STATUS.md](RELEASE_STATUS.md). GitHub rejected an explicit CI dispatch with HTTP 422: "Actions has been disabled for this user." The repository workflow and repository-level Actions are enabled; account-level CI is blocked and no remote test run passed. Source/build checks do not establish mobile support or real provider compatibility.

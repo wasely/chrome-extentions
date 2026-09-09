@@ -17,6 +17,7 @@ Status: **not ready to submit**. Public source and local candidate builds are fo
 ## Required live gates
 
 - [ ] Public GitHub accessibility: repository is created, API visibility is public, and the pushed commit is verified, but an unauthenticated browser currently receives 404. Privacy/support URLs must work publicly before submission.
+- [ ] GitHub account Actions restriction: manual CI dispatch returned HTTP 422, "Actions has been disabled for this user." Repository Actions are enabled. Resolve the account restriction before running the three-OS workflow.
 - [ ] Supabase and Resend account access, Free projects configured.
 - [ ] Resend-generated DNS records added to `auth.syncmedia.shop` and verified.
 - [ ] Custom SMTP and both OTP templates enabled. Real code delivery and invalid/expired-code checks.
