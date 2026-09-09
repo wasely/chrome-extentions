@@ -16,6 +16,7 @@ Status: **not ready to submit**. Public source and local candidate builds are fo
 
 ## Required live gates
 
+- [ ] Public GitHub accessibility: repository is created, API visibility is public, and the pushed commit is verified, but an unauthenticated browser currently receives 404. Privacy/support URLs must work publicly before submission.
 - [ ] Supabase and Resend account access, Free projects configured.
 - [ ] Resend-generated DNS records added to `auth.syncmedia.shop` and verified.
 - [ ] Custom SMTP and both OTP templates enabled. Real code delivery and invalid/expired-code checks.
