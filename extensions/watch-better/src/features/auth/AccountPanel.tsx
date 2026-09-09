@@ -20,6 +20,7 @@ export function AccountPanel({
   const id = useId();
   const [status, setStatus] = useState<AuthStatus | null>(initialStatus ?? null);
   const [email, setEmail] = useState('');
+  const [consent, setConsent] = useState(false);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState(false);
@@ -56,9 +57,13 @@ export function AccountPanel({
         throw new Error('Could not save email. Please try again.');
       setStatus(next);
       setEmail('');
+      setConsent(false);
       if (next.kind === 'unlocked') onUnlocked?.();
-      else setMessage('Email removed from this browser.');
+      else setMessage('Your signup email has been deleted.');
     } catch (failure) {
+      void request({ type: 'public:auth-status' })
+        .then(setStatus)
+        .catch(() => undefined);
       setError(true);
       setMessage(
         failure instanceof Error
@@ -84,8 +89,8 @@ export function AccountPanel({
         <>
           <p>{status.email}</p>
           <p>
-            Your email stays in this browser. Remove it to reset access and disconnect
-            personal APIs.
+            Your signup email is stored privately in GitHub. Remove it to delete your
+            signup, reset access, and disconnect personal APIs.
           </p>
           <div className="wb-account__actions">
             <button
@@ -106,7 +111,7 @@ export function AccountPanel({
           <form
             onSubmit={(event) => {
               event.preventDefault();
-              void act({ type: 'public:enter-email', email });
+              void act({ type: 'public:enter-email', email, consent });
             }}
           >
             <label htmlFor={`${id}-email`}>Email address</label>
@@ -121,15 +126,37 @@ export function AccountPanel({
               onChange={(event) => setEmail(event.target.value)}
               placeholder="you@example.com"
             />
+            <label className="wb-account__consent">
+              <input
+                type="checkbox"
+                required
+                checked={consent}
+                disabled={busy}
+                onChange={(event) => setConsent(event.target.checked)}
+              />
+              <span>
+                I agree to share my email with Watch Better for signup records.
+              </span>
+            </label>
             <button className="wb-account__primary" type="submit" disabled={busy}>
               {busy ? 'Please wait…' : 'Continue'}
             </button>
           </form>
           <small>
-            Your email stays in this browser. It is not sent to us. No marketing emails.
+            Your email is sent securely through Cloudflare and stored privately in
+            GitHub for up to one year. No verification or marketing emails.
           </small>
         </>
       )}
+      {status?.kind === 'signed-out' && status.pending ? (
+        <button
+          type="button"
+          disabled={busy}
+          onClick={() => void act({ type: 'public:sign-out' })}
+        >
+          Remove pending signup
+        </button>
+      ) : null}
       {message ? (
         <p
           role={error ? 'alert' : 'status'}

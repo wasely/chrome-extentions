@@ -4,9 +4,13 @@ Updated September 9, 2026. This policy describes the public release candidate in
 
 ## Email access
 
-We ask you to enter an email address once to unlock extension features on this browser. No verification code or password is required. The email stays in local Chrome extension storage restricted to trusted extension contexts. It is not sent to the publisher, YouTube, or an email service, and is not synced or used for marketing. Entering an email does not create a server account or verify ownership of the address.
+We ask for an email address and your explicit agreement before sending it to Watch Better. The address travels over HTTPS through our Cloudflare Worker and is stored as a signup record in a private GitHub repository's Issues section. We store the normalized address, consent version, collection time, and deletion date. The address is not verified and does not prove identity. We do not sell it or use it for marketing. No verification emails are sent.
 
-Access is remembered until you remove the email, clear extension storage, or uninstall. Local access checks work offline; YouTube and AI features still require their normal connections. The email is not included in AI prompts.
+Cloudflare processes connection metadata, including IP addresses used for short-term rate limiting. We do not add IP addresses to signup records, enable Worker request logging, or send browsing content to this collector. Durable Objects hold request hashes and GitHub issue references for retry, deletion and retention; they do not persist the email itself. GitHub and Cloudflare also process service metadata under their own policies.
+
+After the collector confirms storage, Chrome remembers access locally. The email and a random deletion receipt remain in extension storage restricted to trusted extension contexts, never sync storage or YouTube page scripts. Previously local-only emails are not uploaded automatically: users must agree again. The signup email and deletion receipt are never included in AI prompts.
+
+Signup records are scheduled for deletion after 365 days, with daily retries if a provider outage prevents deletion. GitHub and Cloudflare may retain platform backups or security records under their own retention policies. The deletion receipt lets the original browser remove its signup without requiring email verification.
 
 ## Video information and AI
 
@@ -26,8 +30,10 @@ No analytics, advertising trackers or remote executable code are included. Tempo
 
 ## Controls and deletion
 
-Privacy, support, extension disable controls, and email management remain reachable without full feature access. Remove email in the popup or settings clears this browser's saved email, personal API configuration/keys and session caches, and locks extension features until an email is entered again. It does not sign you out of ChatGPT or Gemini or delete provider-held conversations. Uninstalling clears extension storage. Watch Better has no server account to delete. Provider data remains governed by the provider's retention and deletion controls.
+Privacy, support, extension disable controls, and email management remain reachable before signup. Remove email asks the collector to delete this browser's private GitHub signup, then clears local email/access, personal API configuration/keys, and session caches. If deletion cannot be confirmed, the receipt is kept so you can retry. Remove pending signup handles interrupted submissions. No user can retrieve other signup records through the public collector.
+
+Removing an email does not sign you out of ChatGPT or Gemini or delete provider-held conversations. Uninstalling clears local extension storage, including the deletion receipt, but cannot notify the collector; use Remove email before uninstalling to request early deletion. Otherwise the one-year retention applies. Each browser may create a separate signup record for the same unverified address; removal affects that browser's record.
 
 For support, [open an issue](https://github.com/wasely/chrome-extentions/issues) without posting your email, API keys or private content. See [security reporting](SECURITY.md) for sensitive reports.
 
-Service policies: [OpenAI](https://openai.com/policies/privacy-policy/), [Google](https://policies.google.com/privacy). A custom API provider has its own policy.
+Service policies: [GitHub](https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement), [Cloudflare](https://www.cloudflare.com/privacypolicy/), [OpenAI](https://openai.com/policies/privacy-policy/), [Google](https://policies.google.com/privacy). A custom API provider has its own policy.

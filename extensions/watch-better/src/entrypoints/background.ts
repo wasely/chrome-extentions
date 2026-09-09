@@ -707,8 +707,8 @@ export default defineBackground(() => {
   browser.storage.onChanged.addListener((changes, area) => {
     if (
       area === 'local' &&
-      changes['watchbetter:email:v1'] &&
-      !changes['watchbetter:email:v1'].newValue
+      changes['watchbetter:signup:v2'] &&
+      !changes['watchbetter:signup:v2'].newValue
     ) {
       apiService.cancelAll();
       void cleanupAllFrames().catch(() => undefined);
@@ -716,7 +716,7 @@ export default defineBackground(() => {
     if (
       area === 'local' &&
       Object.keys(changes).some(
-        (key) => key === 'watchbetter:settings:v4' || key === 'watchbetter:email:v1',
+        (key) => key === 'watchbetter:settings:v4' || key === 'watchbetter:signup:v2',
       )
     )
       void notifyPublicChange().catch(() => undefined);

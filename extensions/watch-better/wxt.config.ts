@@ -1,4 +1,9 @@
 import { defineConfig } from 'wxt';
+import { loadEnv } from 'vite';
+const collector = { ...loadEnv('production', process.cwd(), 'VITE_'), ...process.env }
+  .VITE_EMAIL_COLLECTOR_URL;
+if (collector && !/^https:\/\/[a-z0-9-]+\.[a-z0-9-]+\.workers\.dev$/.test(collector))
+  throw new Error('Use the exact HTTPS email collector workers.dev origin.');
 export default defineConfig({
   srcDir: 'src',
   modules: ['@wxt-dev/module-react'],
@@ -19,6 +24,7 @@ export default defineConfig({
       'https://www.youtube.com/*',
       'https://chatgpt.com/*',
       'https://gemini.google.com/*',
+      ...(collector ? [`${collector}/*`] : []),
     ],
     action: {
       default_title: 'Watch Better',

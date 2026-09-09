@@ -1,5 +1,5 @@
 {
-  "candidateVersion": "1.0.1",
+  "candidateVersion": "1.0.2",
   "cleanInstall": false,
   "embeddedProviders": false,
   "personalApiProviders": false,
@@ -7,6 +7,7 @@
   "desktopPlatforms": false,
   "storeAssetsReviewed": false,
   "notes": "Live checks pending; do not submit this candidate.",
-  "localEmailAccess": false,
-  "publicLinks": false
+  "publicLinks": false,
+  "emailCollection": false,
+  "emailDeletion": false
 }

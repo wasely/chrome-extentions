@@ -3,7 +3,7 @@ import type { AuthStatus } from '@/features/auth/auth-service';
 
 export type PublicRequest =
   | { type: 'public:auth-status' }
-  | { type: 'public:enter-email'; email: string }
+  | { type: 'public:enter-email'; email: string; consent: boolean }
   | { type: 'public:sign-out' }
   | { type: 'public:api-status' }
   | { type: 'public:api-mode'; enabled: boolean }

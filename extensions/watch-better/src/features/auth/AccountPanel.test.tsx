@@ -16,8 +16,11 @@ describe('email-only onboarding', () => {
         onUnlocked={onUnlocked}
       />,
     );
-    expect(screen.getByText(/stays in this browser/i)).toBeVisible();
+    expect(screen.getByText(/stored privately in GitHub/i)).toBeVisible();
     await user.type(screen.getByLabelText('Email address'), 'viewer@example.com');
+    await user.click(
+      screen.getByRole('checkbox', { name: /agree to share my email/i }),
+    );
     await user.click(screen.getByRole('button', { name: 'Continue' }));
     expect(
       await screen.findByRole('heading', { name: 'You have full access' }),
@@ -27,6 +30,7 @@ describe('email-only onboarding', () => {
     expect(request).toHaveBeenCalledExactlyOnceWith({
       type: 'public:enter-email',
       email: 'viewer@example.com',
+      consent: true,
     });
   });
   it('keeps email entry available after a storage failure', async () => {
@@ -41,6 +45,9 @@ describe('email-only onboarding', () => {
       />,
     );
     await user.type(screen.getByLabelText('Email address'), 'viewer@example.com');
+    await user.click(
+      screen.getByRole('checkbox', { name: /agree to share my email/i }),
+    );
     await user.click(screen.getByRole('button', { name: 'Continue' }));
     expect(await screen.findByRole('alert')).toHaveTextContent('Could not save email.');
     expect(onUnlocked).not.toHaveBeenCalled();

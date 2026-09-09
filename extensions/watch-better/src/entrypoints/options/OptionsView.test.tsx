@@ -20,7 +20,9 @@ describe('OptionsView', () => {
     expect(
       screen.getByRole('heading', { name: 'AI sessions and privacy' }),
     ).toBeInTheDocument();
-    expect(screen.getByText(/Your email stays in this browser/)).toBeInTheDocument();
+    expect(
+      screen.getByText(/your signup email is sent through Cloudflare/),
+    ).toBeInTheDocument();
     expect(document.body).not.toHaveTextContent(/DeepSeek/i);
     expect(screen.getByText('Settings loaded')).toBeInTheDocument();
   });

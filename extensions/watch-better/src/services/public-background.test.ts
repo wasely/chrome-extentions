@@ -40,6 +40,13 @@ vi.mock('wxt/browser', () => {
     },
   };
 });
+vi.mock('@/features/auth/email-collector', () => ({
+  EMAIL_CONSENT_VERSION: '2026-09-09',
+  createEmailCollector: () => ({
+    save: () => Promise.resolve(),
+    remove: () => Promise.resolve(),
+  }),
+}));
 import { apiService, authService, handlePublicRequest } from './public-background';
 const content = {
   url: 'https://www.youtube.com/watch?v=abcdefghijk',
@@ -97,7 +104,7 @@ describe('public background privilege boundary', () => {
         ).ok,
       ).toBe(false);
     for (const key of [
-      'watchbetter:email:v1',
+      'watchbetter:signup:v2',
       'watchbetter:auth:v1',
       'watchbetter:api-key:v1',
       '__proto__',
@@ -113,14 +120,17 @@ describe('public background privilege boundary', () => {
   });
   it('unlocks from settings immediately and removes email and API keys locally', async () => {
     const entered = await handlePublicRequest(
-      { type: 'public:enter-email', email: 'viewer@example.com' },
+      { type: 'public:enter-email', email: 'viewer@example.com', consent: true },
       options,
     );
     expect(entered).toEqual({
       ok: true,
       value: { kind: 'unlocked', email: 'viewer@example.com' },
     });
-    expect(state.local['watchbetter:email:v1']).toBe('viewer@example.com');
+    expect(state.local['watchbetter:signup:v2']).toMatchObject({
+      email: 'viewer@example.com',
+      state: 'collected',
+    });
     expect(
       (await handlePublicRequest({ type: 'public:auth-status' }, content)).value,
     ).toEqual({ kind: 'unlocked', email: '' });
@@ -132,7 +142,7 @@ describe('public background privilege boundary', () => {
     expect((await handlePublicRequest({ type: 'public:sign-out' }, options)).ok).toBe(
       true,
     );
-    expect(state.local['watchbetter:email:v1']).toBeUndefined();
+    expect(state.local['watchbetter:signup:v2']).toBeUndefined();
     expect(state.local['watchbetter:api-key:v1']).toBeUndefined();
     expect(await authService.status()).toEqual({ kind: 'signed-out' });
   });

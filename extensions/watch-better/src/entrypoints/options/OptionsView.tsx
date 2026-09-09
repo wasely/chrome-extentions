@@ -341,8 +341,9 @@ export function OptionsView({
           </select>
         </label>
         <p className="ct-options-privacy">
-          Your email stays in this browser and unlocks access without verification. It
-          is not sent to us. No analytics or provider cookies are collected. Opening
+          With your consent, your signup email is sent through Cloudflare and stored
+          privately in GitHub. No verification code is required. Remove email deletes
+          the signup record. No analytics or provider cookies are collected. Opening
           embedded Ask sends bounded captions to your selected provider. Personal API
           sends only when you ask; its key lasts for the session unless you choose
           Remember. Smart Skip is off by default and never changes playback speed. Start

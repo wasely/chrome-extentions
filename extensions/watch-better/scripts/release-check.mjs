@@ -1,12 +1,18 @@
 import { readFileSync } from 'node:fs';
+import { loadEnv } from 'vite';
+const collector = { ...loadEnv('production', process.cwd(), 'VITE_'), ...process.env }
+  .VITE_EMAIL_COLLECTOR_URL;
 
 const failures = [];
 const evidence = JSON.parse(readFileSync('docs/release-evidence.json', 'utf8'));
 const manifest = JSON.parse(readFileSync('.output/chrome-mv3/manifest.json', 'utf8'));
+if (!collector || !manifest.host_permissions.includes(`${collector}/*`))
+  failures.push('Built email collector host missing.');
 if (manifest.version !== evidence.candidateVersion)
   failures.push('Live evidence version does not match the build.');
 for (const gate of [
-  'localEmailAccess',
+  'emailCollection',
+  'emailDeletion',
   'publicLinks',
   'cleanInstall',
   'embeddedProviders',

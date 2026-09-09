@@ -1,6 +1,19 @@
 # Candidate validation — September 9, 2026
 
-## Current candidate: 1.0.1, local email entry
+## Current candidate: 1.0.2, private email collection
+
+Owner-approved scope now collects emails after an explicit checkbox through Cloudflare into private GitHub Issues. The private repo and deployed Worker exist. The collector reports unconfigured until a repo-restricted GitHub key is installed. It returns 503 for signup rather than falsely claiming collection.
+
+- Backend tests cover private-only storage, consent, input size, origin/rate limits, idempotency, deletion and retention.
+- Local fixture UI shows the collection disclosure and an unchecked consent checkbox. It never sends real email data.
+- `npm run validate` passed: formatting, lint, strict TypeScript, **46 files / 303 tests**, production build.
+- `npm run zip` produced the 1.0.2 candidate. Inspection confirmed the exact collector host and consent flow, with no GitHub API endpoint, server key, environment files, source maps, or backend code bundled.
+- Eight backend tests passed. The deployed Worker health responds HTTP 200 with configured false; signup responds HTTP 503 until its restricted key is installed.
+- A local real-GitHub smoke test created one synthetic example.com signup, retried without duplication, and deleted it. The private repo contains zero remaining issues. The local GitHub credential was never deployed to the Worker.
+- Light 320px and dark 1000px fixture views inspected. Consent is unchecked by default; fixture submission reaches full access. These are not live installed-extension or hosted collection checks.
+- Store packaging correctly remains blocked for the recorded live gates.
+
+## Prior candidate: 1.0.1, local email entry (superseded)
 
 Email verification and server deployment were removed at the owner's request. Email entry is now local onboarding, not verified identity. No domain, DNS, SMTP, environment values, or always-on PC are required. The entered email stays in trusted Chrome extension storage and is not sent to the publisher.
 

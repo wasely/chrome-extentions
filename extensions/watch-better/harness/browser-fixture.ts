@@ -2,26 +2,33 @@
 import { AuthService } from '@/features/auth/auth-service';
 const listeners = new Set<(message: unknown) => void>();
 const values: Record<string, unknown> = {};
-const access = new AuthService({
-  get: (key) => Promise.resolve({ [key]: values[key] }),
-  set: (data) => {
-    Object.assign(values, data);
-    return Promise.resolve();
+const access = new AuthService(
+  {
+    get: (key) => Promise.resolve({ [key]: values[key] }),
+    set: (data) => {
+      Object.assign(values, data);
+      return Promise.resolve();
+    },
+    remove: (key) => {
+      delete values[key];
+      return Promise.resolve();
+    },
   },
-  remove: (key) => {
-    delete values[key];
-    return Promise.resolve();
-  },
-});
+  { save: () => Promise.resolve(), remove: () => Promise.resolve() },
+);
 export const browser = {
   runtime: {
-    sendMessage: async (request: { type: string; email?: string }) => {
+    sendMessage: async (request: {
+      type: string;
+      email?: string;
+      consent?: boolean;
+    }) => {
       if (request.type === 'public:auth-status')
         return { ok: true, value: await access.status() };
       if (request.type === 'public:enter-email' || request.type === 'public:sign-out') {
         const value =
           request.type === 'public:enter-email'
-            ? await access.enterEmail(request.email ?? '')
+            ? await access.enterEmail(request.email ?? '', request.consent === true)
             : (await access.signOut(), await access.status());
         for (const listener of listeners) listener({ type: 'public:changed' });
         return { ok: true, value };

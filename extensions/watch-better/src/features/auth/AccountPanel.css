@@ -169,3 +169,16 @@
     padding: 16px;
   }
 }
+
+.wb-account__consent {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 12px;
+}
+.wb-account__consent input[type='checkbox'] {
+  flex: 0 0 18px;
+  margin: 2px 0 0;
+  padding: 0;
+  accent-color: #214ecf;
+}

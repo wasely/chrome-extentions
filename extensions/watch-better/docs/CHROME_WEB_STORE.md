@@ -12,7 +12,7 @@ Detailed description:
 
 Watch Better brings a searchable transcript and AI questions alongside desktop YouTube. Find words, select and copy captions, and jump to useful timestamps. Open Quick Learn from a thumbnail or keep separate video cards on the page.
 
-Enter your email for immediate full extension access, without verification. Your email stays in your browser and is not sent to the publisher. No password or subscription. English is the default, with other available caption tracks selectable.
+Enter your email and agree to signup collection for full extension access, without verification. Your email is stored privately in GitHub through Cloudflare. No password or subscription. English is the default, with other available caption tracks selectable.
 
 Ask uses your signed-in ChatGPT or Gemini session. Advanced users can optionally connect a personal Gemini or OpenAI-compatible API account. API providers may charge for usage. Your API key stays on your device and is forgotten when Chrome closes unless you select Remember.
 
@@ -31,22 +31,23 @@ Requires desktop Chrome 133+ and available YouTube captions. Mobile Chrome is un
 
 ## Permission explanations
 
-- storage: device settings, local email access, optional personal API key and temporary transcript/Smart Skip caches. No sync storage.
+- storage: device settings, saved signup and deletion receipt, optional personal API key and temporary transcript/Smart Skip caches. No sync storage.
 - declarativeNetRequest: scoped header adjustments for explicitly opened embedded AI sessions. Restricted to the prepared tab, provider, and YouTube-initiated subframes. Review remaining header removals during live provider verification.
 - webNavigation: bind and clean up embedded provider frames across navigation.
 - YouTube host: captions, timestamp navigation and the isolated extension interface.
 - ChatGPT/Gemini hosts: embedded signed-in AI workflow, invoked by the viewer.
+- Exact collector host: consented signup collection and user-requested deletion.
 - Optional HTTPS hosts: request only the exact endpoint the user selects in Advanced API settings. No broad host grant at install time.
 
 ## Privacy disclosures to review against the submitted build
 
-Declare email/personal information, authentication information and website content (video titles/URLs/captions and prompts). Explain video URL handling in any browsing-data question; do not claim the extension processes no visited URLs. There are no ads or analytics. Keys are optional device-side credentials. User content may be sent to the chosen AI provider, and the onboarding email is stored only locally, with no server account or email delivery. The complete policy must remain publicly reachable.
+Declare email/personal information, authentication information and website content (video titles/URLs/captions and prompts). Explain video URL handling in any browsing-data question; do not claim the extension processes no visited URLs. There are no ads or analytics. Keys are optional device-side credentials. User content may be sent to the chosen AI provider, and the signup email is collected through Cloudflare and stored privately in GitHub after consent, without verification or marketing emails. The complete policy must remain publicly reachable.
 
 ## Reviewer instructions
 
-Install the final ZIP, open Options, enter an email address and select Continue to unlock features immediately. No email is sent. Remove email resets access and disconnects personal APIs. No password or paid Watch Better account is required. Open a captioned YouTube video to use transcripts. For embedded AI, sign into ChatGPT/Gemini through their normal pages when prompted. API fallback is optional and requires the reviewer's own provider key. Smart Skip is off; leave it off unless reviewing the experimental controls.
+Install the final ZIP, open Options, enter an email address, select the consent checkbox and Continue. The collector must confirm storage before access unlocks. No verification email is sent. Remove email deletes that signup and disconnects personal APIs. No password or paid Watch Better account is required. Open a captioned YouTube video to use transcripts. For embedded AI, sign into ChatGPT/Gemini through their normal pages when prompted. API fallback is optional and requires the reviewer's own provider key. Smart Skip is off; leave it off unless reviewing the experimental controls.
 
-Verify email entry, persistence after restarting Chrome, removal, and re-entry on the final package. There is no email service or server account.
+Verify email entry, persistence after restarting Chrome, removal, and re-entry on the final package. The private signup collector must be active; no email delivery service is used.
 
 Run `npm run package:store`, inspect the ZIP manifest and contents, then upload in the verified publisher account. Complete the privacy and distribution fields. Check the current dashboard requirements before submitting. No automatic submission or public-release claim is made by this repository.
 

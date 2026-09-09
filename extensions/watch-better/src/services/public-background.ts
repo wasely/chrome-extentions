@@ -1,3 +1,4 @@
+import { createEmailCollector } from '@/features/auth/email-collector';
 import { browser } from 'wxt/browser';
 import { AuthService } from '@/features/auth/auth-service';
 import { isPublicStorageKey } from '@/storage/public-storage';
@@ -13,7 +14,10 @@ const object = (value: unknown): Record<string, unknown> =>
   value && typeof value === 'object' && !Array.isArray(value)
     ? (value as Record<string, unknown>)
     : {};
-export const authService = new AuthService(browser.storage.local);
+export const authService = new AuthService(
+  browser.storage.local,
+  createEmailCollector(import.meta.env.VITE_EMAIL_COLLECTOR_URL ?? ''),
+);
 export const apiService = new ApiService();
 let cleanupFrames: () => Promise<void> = () => Promise.resolve();
 export function registerPublicCleanup(cleanup: () => Promise<void>): void {
@@ -147,7 +151,10 @@ export async function handlePublicRequest(
     }
     if (request.type === 'public:enter-email') {
       if (typeof request.email !== 'string') throw new Error('Enter an email address.');
-      const value = await authService.enterEmail(request.email);
+      const value = await authService.enterEmail(
+        request.email,
+        request.consent === true,
+      );
       await notifyPublicChange();
       return { ok: true, value };
     }
