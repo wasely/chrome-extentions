@@ -1,0 +1,12 @@
+{
+  "candidateVersion": "1.0.0",
+  "emailDelivery": false,
+  "accountDeletion": false,
+  "cleanInstall": false,
+  "embeddedProviders": false,
+  "personalApiProviders": false,
+  "youtubeLifecycle": false,
+  "desktopPlatforms": false,
+  "storeAssetsReviewed": false,
+  "notes": "Live checks pending; do not submit this candidate."
+}

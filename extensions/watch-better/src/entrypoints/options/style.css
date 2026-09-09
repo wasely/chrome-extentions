@@ -1,0 +1,31 @@
+:root {
+  color-scheme: light dark;
+  background: radial-gradient(circle at 50% -20%, #fff 0, transparent 42%), #f5f6f8;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  min-width: 300px;
+  min-height: 100vh;
+  margin: 0;
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
+  background: radial-gradient(circle at 50% -20%, #fff 0, transparent 42%), #f5f6f8;
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  background: radial-gradient(circle at 50% -20%, #252931 0, transparent 42%), #0d0e11;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    background:
+      radial-gradient(circle at 50% -20%, #252931 0, transparent 42%), #0d0e11;
+  }
+}

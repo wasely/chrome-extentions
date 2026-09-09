@@ -1,0 +1,171 @@
+.wb-account {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 620px;
+  margin: 0 auto;
+  padding: 24px;
+  border: 1px solid #d9dde5;
+  border-radius: 16px;
+  background: #fff;
+  color: #202632;
+  font:
+    14px/1.5 system-ui,
+    sans-serif;
+  overflow-wrap: anywhere;
+}
+.wb-account * {
+  box-sizing: border-box;
+}
+.wb-account h2 {
+  font-size: 23px;
+  line-height: 1.2;
+  margin: 8px 0 12px;
+  letter-spacing: -0.5px;
+}
+.wb-account__eyebrow {
+  font-size: 12px;
+  font-weight: 700;
+  color: #536070;
+}
+.wb-account form {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  margin: 18px 0 12px;
+}
+.wb-account input,
+.wb-account select,
+.wb-account textarea {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid #b8c0cd;
+  border-radius: 8px;
+  background: #f8f9fb;
+  color: inherit;
+  padding: 11px 12px;
+  font: inherit;
+}
+.wb-account input[type='checkbox'] {
+  width: 18px;
+  height: 18px;
+}
+.wb-account button {
+  min-height: 42px;
+  border: 1px solid #b8c0cd;
+  border-radius: 8px;
+  background: #f3f5f8;
+  color: inherit;
+  padding: 8px 13px;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+.wb-account .wb-account__primary,
+[data-theme] .wb-account .wb-account__primary {
+  background: #214ecf;
+  border-color: #214ecf;
+  color: #fff;
+}
+.wb-account button:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+.wb-account :focus-visible {
+  outline: 3px solid #679bff;
+  outline-offset: 3px;
+}
+.wb-account__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 0;
+}
+.wb-account small {
+  display: block;
+  font-size: 12px;
+  color: #536070;
+}
+.wb-account footer {
+  display: flex;
+  gap: 16px;
+  margin-top: 20px;
+}
+.wb-account a {
+  color: #244fca;
+}
+.wb-account__error {
+  color: #ac2333;
+}
+.wb-access {
+  padding: 16px;
+}
+.wb-access .wb-account {
+  max-width: none;
+}
+@media (prefers-color-scheme: dark) {
+  .wb-account {
+    background: #14171e;
+    color: #edf0f7;
+    border-color: #343b49;
+  }
+  .wb-account input,
+  .wb-account select,
+  .wb-account textarea,
+  .wb-account button {
+    background: #222731;
+    border-color: #525b6c;
+  }
+  .wb-account small,
+  .wb-account__eyebrow {
+    color: #b5becc;
+  }
+  .wb-account a {
+    color: #9bb7ff;
+  }
+  .wb-account__error {
+    color: #ff9dab;
+  }
+}
+.wb-account + .wb-account {
+  margin-top: 16px;
+}
+[data-theme='dark'] .wb-account {
+  background: #14171e;
+  color: #edf0f7;
+  border-color: #343b49;
+}
+[data-theme='dark'] .wb-account :is(input, select, textarea, button) {
+  background: #222731;
+  border-color: #525b6c;
+}
+[data-theme='dark'] .wb-account :is(small, .wb-account__eyebrow) {
+  color: #b5becc;
+}
+[data-theme='dark'] .wb-account a {
+  color: #9bb7ff;
+}
+[data-theme='light'] .wb-account {
+  background: #fff;
+  color: #202632;
+  border-color: #d9dde5;
+}
+[data-theme='light'] .wb-account :is(input, select, textarea, button) {
+  background: #f8f9fb;
+  border-color: #b8c0cd;
+}
+[data-theme='light'] .wb-account :is(small, .wb-account__eyebrow) {
+  color: #536070;
+}
+[data-theme='light'] .wb-account a {
+  color: #244fca;
+}
+.wb-account .wb-account__primary,
+[data-theme] .wb-account .wb-account__primary {
+  background: #214ecf;
+  color: #fff;
+}
+@media (max-width: 320px) {
+  .wb-account {
+    padding: 16px;
+  }
+}

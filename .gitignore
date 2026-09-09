@@ -1,0 +1,12 @@
+**/node_modules/
+**/.output/
+**/.wxt/
+**/coverage/
+**/artifacts/
+**/.env
+**/.env.*
+!**/.env.example
+**/.supabase/
+**/.temp/
+*.log
+.DS_Store

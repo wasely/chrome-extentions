@@ -1,0 +1,85 @@
+.ct-api-chat {
+  display: grid;
+  gap: 12px;
+  padding: 12px;
+  color: inherit;
+  font: inherit;
+  min-width: 0;
+}
+.ct-api-chat__notice {
+  font-size: 12px;
+  opacity: 0.75;
+  margin: 0;
+}
+.ct-api-chat__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  justify-content: space-between;
+  gap: 8px;
+}
+.ct-api-chat label,
+.ct-api-chat form {
+  display: grid;
+  gap: 6px;
+}
+.ct-api-chat textarea {
+  min-height: 72px;
+  resize: vertical;
+  width: 100%;
+  box-sizing: border-box;
+}
+.ct-api-chat button,
+.ct-api-chat select,
+.ct-api-chat textarea,
+.ct-api-mode select {
+  font: inherit;
+  color: inherit;
+  background: transparent;
+  border: 1px solid #8886;
+  border-radius: 8px;
+  padding: 8px;
+}
+.ct-api-chat button {
+  cursor: pointer;
+}
+.ct-api-chat button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.ct-api-chat__messages {
+  max-height: 380px;
+  overflow: auto;
+  overflow-wrap: anywhere;
+}
+.ct-api-chat__messages article {
+  padding: 10px 0;
+  border-bottom: 1px solid #8883;
+}
+.ct-api-chat__messages p {
+  white-space: pre-wrap;
+  line-height: 1.5;
+  margin: 6px 0;
+}
+.ct-api-mode {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  padding: 8px 12px;
+}
+.ct-ask-experience {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+.ct-ask-experience__pane {
+  flex: 1;
+  min-height: 0;
+  height: 100%;
+}
+.ct-ask-experience[hidden],
+.ct-ask-experience__pane[hidden] {
+  display: none;
+}
