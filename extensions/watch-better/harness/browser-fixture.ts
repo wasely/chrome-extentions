@@ -1,18 +1,40 @@
 // Harness only. Never import this adapter from production code.
-const listeners = new Set<() => void>();
+import { AuthService } from '@/features/auth/auth-service';
+const listeners = new Set<(message: unknown) => void>();
+const values: Record<string, unknown> = {};
+const access = new AuthService({
+  get: (key) => Promise.resolve({ [key]: values[key] }),
+  set: (data) => {
+    Object.assign(values, data);
+    return Promise.resolve();
+  },
+  remove: (key) => {
+    delete values[key];
+    return Promise.resolve();
+  },
+});
 export const browser = {
   runtime: {
-    sendMessage: (request: { type: string }) =>
-      Promise.resolve({
+    sendMessage: async (request: { type: string; email?: string }) => {
+      if (request.type === 'public:auth-status')
+        return { ok: true, value: await access.status() };
+      if (request.type === 'public:enter-email' || request.type === 'public:sign-out') {
+        const value =
+          request.type === 'public:enter-email'
+            ? await access.enterEmail(request.email ?? '')
+            : (await access.signOut(), await access.status());
+        for (const listener of listeners) listener({ type: 'public:changed' });
+        return { ok: true, value };
+      }
+      return {
         ok: true,
-        value:
-          request.type === 'public:auth-status'
-            ? { kind: 'signed-out' }
-            : { connected: false, configuration: null, remembered: false },
-      }),
+        value: { connected: false, configuration: null, remembered: false },
+      };
+    },
     onMessage: {
-      addListener: (listener: () => void) => listeners.add(listener),
-      removeListener: (listener: () => void) => listeners.delete(listener),
+      addListener: (listener: (message: unknown) => void) => listeners.add(listener),
+      removeListener: (listener: (message: unknown) => void) =>
+        listeners.delete(listener),
     },
   },
   permissions: { request: () => Promise.resolve(false) },

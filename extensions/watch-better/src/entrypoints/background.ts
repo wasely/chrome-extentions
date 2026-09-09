@@ -492,12 +492,12 @@ const handleRequest = async (
     request.type.startsWith('webchat:') &&
     request.type !== 'webchat:frame-ready' &&
     request.type !== 'webchat:frame-reset' &&
-    (await authService.status()).kind !== 'verified'
+    (await authService.status()).kind !== 'unlocked'
   )
     return {
       ok: false,
       type: 'error',
-      message: 'Verify your email in Watch Better settings first.',
+      message: 'Enter your email in Watch Better settings first.',
     };
 
   switch (request.type) {
@@ -707,8 +707,8 @@ export default defineBackground(() => {
   browser.storage.onChanged.addListener((changes, area) => {
     if (
       area === 'local' &&
-      changes['watchbetter:auth:v1'] &&
-      !changes['watchbetter:auth:v1'].newValue
+      changes['watchbetter:email:v1'] &&
+      !changes['watchbetter:email:v1'].newValue
     ) {
       apiService.cancelAll();
       void cleanupAllFrames().catch(() => undefined);
@@ -716,7 +716,7 @@ export default defineBackground(() => {
     if (
       area === 'local' &&
       Object.keys(changes).some(
-        (key) => key === 'watchbetter:settings:v4' || key === 'watchbetter:auth:v1',
+        (key) => key === 'watchbetter:settings:v4' || key === 'watchbetter:email:v1',
       )
     )
       void notifyPublicChange().catch(() => undefined);

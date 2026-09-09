@@ -2,11 +2,11 @@
 
 YouTube captions, transcript search, timestamp navigation, Quick Learn, AI questions, and experimental Smart Skip in a desktop Chrome extension.
 
-**1.0.0 release candidate; not submitted to the Chrome Web Store.** Email-service deployment and live browser checks are still required. See [release status](docs/RELEASE_STATUS.md).
+**1.0.1 release candidate; not submitted to the Chrome Web Store.** Public links and live browser checks are still required. See [release status](docs/RELEASE_STATUS.md).
 
 ## Public experience
 
-- Enter an email and verify its six-digit code for full access. No password, subscription, or marketing signup.
+- Enter an email for immediate full access; no verification code. The address stays in this browser and is not sent to the publisher. No password, subscription, or marketing signup.
 - English interface and preferred English captions; choose original or another available track at any time.
 - Search, select, copy, and seek transcript rows. Separate floating cards retain their video context.
 - Use signed-in ChatGPT or Gemini in Ask. Opening embedded Ask shares bounded caption context. Provider sign-in, availability, and usage limits still apply.
@@ -26,18 +26,16 @@ npm run validate
 npm run build
 ```
 
-Load `.output/chrome-mv3` through `chrome://extensions` → Developer mode → Load unpacked. Builds without Auth configuration show an unavailable-sign-in message and keep features locked. There is no production auth bypass.
-
-Copy `.env.example` to `.env` and follow [email setup](docs/EMAIL_SETUP.md). Only the Supabase public project URL and publishable client key belong in the build. SMTP, service-role and personal API keys must never be bundled or committed.
+Load `.output/chrome-mv3` through `chrome://extensions` → Developer mode → Load unpacked. Enter an email in Options and select Continue. No backend, domain, DNS, or environment setup is required. See [email entry](docs/EMAIL_SETUP.md). This local onboarding does not verify identity. Never bundle or commit personal API keys.
 
 ```powershell
 npm run zip           # local review candidate, not proof of release readiness
-npm run package:store # validation plus mandatory configuration/live-evidence gates
+npm run package:store # validation plus mandatory live-evidence gates
 ```
 
 ## Verification and support
 
-Tests cover transcript parsing/selection, Smart Skip safeguards, navigation and disposal, account verification, API parsing/cancellation and storage privileges. [Release status](docs/RELEASE_STATUS.md) lists the external checks still required. Harness screenshots are fixture previews, not evidence of live provider or email behavior.
+Tests cover transcript parsing/selection, Smart Skip safeguards, navigation and disposal, local email entry/removal, API parsing/cancellation and storage privileges. [Release status](docs/RELEASE_STATUS.md) lists the external checks still required. Harness screenshots are fixture previews, not evidence of live provider or installed-extension behavior.
 
 [Privacy](PRIVACY.md) · [Store packet](docs/CHROME_WEB_STORE.md) · [Report a bug](https://github.com/wasely/chrome-extentions/issues)
 

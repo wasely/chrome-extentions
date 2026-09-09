@@ -2,61 +2,62 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import { AccountPanel } from './AccountPanel';
-import type { AuthStatus } from './auth-service';
-
 describe('email-only onboarding', () => {
-  it('sends a code, accepts pasted digits, and unlocks after server verification', async () => {
+  it('unlocks with one email submission and no code step', async () => {
     const user = userEvent.setup();
     const request = vi
       .fn()
-      .mockResolvedValueOnce({ kind: 'signed-out' })
-      .mockResolvedValueOnce({
-        kind: 'verified',
-        email: 'viewer@example.com',
-        offline: false,
-      } satisfies AuthStatus);
-    const onVerified = vi.fn();
+      .mockResolvedValue({ kind: 'unlocked', email: 'viewer@example.com' });
+    const onUnlocked = vi.fn();
     render(
       <AccountPanel
         initialStatus={{ kind: 'signed-out' }}
         request={request}
-        onVerified={onVerified}
+        onUnlocked={onUnlocked}
       />,
     );
+    expect(screen.getByText(/stays in this browser/i)).toBeVisible();
     await user.type(screen.getByLabelText('Email address'), 'viewer@example.com');
-    await user.click(screen.getByRole('button', { name: 'Send code' }));
-    expect(screen.getByRole('button', { name: /Resend in/ })).toBeDisabled();
-    await user.type(screen.getByLabelText('Six-digit verification code'), '123456');
-    await user.click(screen.getByRole('button', { name: 'Verify and unlock' }));
+    await user.click(screen.getByRole('button', { name: 'Continue' }));
     expect(
       await screen.findByRole('heading', { name: 'You have full access' }),
     ).toBeVisible();
-    expect(onVerified).toHaveBeenCalledOnce();
-    expect(request).toHaveBeenLastCalledWith({
-      type: 'public:verify-code',
+    expect(screen.queryByLabelText(/code/i)).toBeNull();
+    expect(onUnlocked).toHaveBeenCalledOnce();
+    expect(request).toHaveBeenCalledExactlyOnceWith({
+      type: 'public:enter-email',
       email: 'viewer@example.com',
-      code: '123456',
     });
   });
-  it('shows errors without unlocking and requires confirmation for deletion', async () => {
+  it('keeps email entry available after a storage failure', async () => {
     const user = userEvent.setup();
-    const request = vi.fn().mockRejectedValue(new Error('Email service unavailable.'));
+    const request = vi.fn().mockRejectedValue(new Error('Could not save email.'));
+    const onUnlocked = vi.fn();
     render(
       <AccountPanel
-        initialStatus={{
-          kind: 'verified',
-          email: 'viewer@example.com',
-          offline: false,
-        }}
+        initialStatus={{ kind: 'signed-out' }}
+        request={request}
+        onUnlocked={onUnlocked}
+      />,
+    );
+    await user.type(screen.getByLabelText('Email address'), 'viewer@example.com');
+    await user.click(screen.getByRole('button', { name: 'Continue' }));
+    expect(await screen.findByRole('alert')).toHaveTextContent('Could not save email.');
+    expect(onUnlocked).not.toHaveBeenCalled();
+    expect(screen.getByRole('button', { name: 'Continue' })).toBeEnabled();
+  });
+  it('removes the local email and returns to entry', async () => {
+    const user = userEvent.setup();
+    const request = vi.fn().mockResolvedValue({ kind: 'signed-out' });
+    render(
+      <AccountPanel
+        initialStatus={{ kind: 'unlocked', email: 'viewer@example.com' }}
         request={request}
       />,
     );
-    await user.click(screen.getByRole('button', { name: 'Delete account' }));
-    expect(request).not.toHaveBeenCalled();
-    await user.click(screen.getByRole('button', { name: 'Confirm deletion' }));
-    expect(await screen.findByRole('alert')).toHaveTextContent(
-      'Email service unavailable.',
-    );
-    expect(screen.getByRole('heading', { name: 'You have full access' })).toBeVisible();
+    await user.click(screen.getByRole('button', { name: 'Remove email' }));
+    expect(await screen.findByLabelText('Email address')).toBeVisible();
+    expect(screen.queryByText('viewer@example.com')).toBeNull();
+    expect(request).toHaveBeenCalledExactlyOnceWith({ type: 'public:sign-out' });
   });
 });

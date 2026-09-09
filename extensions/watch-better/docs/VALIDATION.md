@@ -1,16 +1,22 @@
 # Candidate validation — September 9, 2026
 
-Executed locally on Windows for version 1.0.0:
+## Current candidate: 1.0.1, local email entry
 
-- `npm run validate`: formatting, ESLint, strict TypeScript, **46 test files / 292 tests**, production build all passed.
-- `npm audit`: **zero reported vulnerabilities**, including development dependencies. Vitest and its coverage package were patched to 4.1.11 for [GHSA-82fw-gwwq-j7x9](https://github.com/vitest-dev/vitest/security/advisories/GHSA-82fw-gwwq-j7x9).
-- Public-project audit: zero blockers or warnings. Redacted Gitleaks scans of extension source and server function: no leaks found.
-- `npm run zip`: candidate ZIP created, **243,987 bytes**, 22 entries including directory entries. Manifest version 1.0.0, Chrome minimum 133. No source maps, environment files, server functions, dependency directories, tests or harness assets in the archive.
-- `npm run release:check`: correctly **blocked** for missing live Supabase configuration and live-release evidence.
-- BrowserOS fixture inspection: account/settings at dark 480px and light 320px. Both fit without horizontal overflow; theme correction inspected. These are UI fixture checks, not live Auth or Chrome-install verification.
-- Smart Skip fixture inspected at dark 320px and light 480px: development warning visible, automatic skipping off, controls fit.
-- GitHub repository created as public and initial pushed SHA verified. Private vulnerability reporting and Actions are enabled. The public browser URL currently returns 404; repository visibility/access needs resolution before privacy URLs can be used in a store submission.
+Email verification and server deployment were removed at the owner's request. Email entry is now local onboarding, not verified identity. No domain, DNS, SMTP, environment values, or always-on PC are required. The entered email stays in trusted Chrome extension storage and is not sent to the publisher.
 
-The ZIP is a local review candidate, not a public download or store-ready release. It fails closed while email sign-in is unconfigured. Tests use explicit fixtures and mocked browser/service boundaries; no production authentication bypass exists.
+- Focused tests cover immediate unlock without network access, remembered access across service recreation, invalid/corrupt emails, removal, legacy credential cleanup, storage failure, and message privilege boundaries.
+- BrowserOS fixture interaction: enter an email, Continue, full-access state, Remove email, return to entry. Real components and local access service with an in-memory browser-storage adapter; no email was sent.
+- Screenshots inspected at light 320px and dark 1000px. Email controls and local-storage disclosure fit; no horizontal page overflow. No verification-code field remains.
+- `npm run validate`: formatting, ESLint, strict TypeScript, **45 test files / 297 tests**, and production build passed.
+- `npm run zip`: 1.0.1 review ZIP built and inspected. No old code endpoints, email-service hosts, environment files, source maps, tests, harness, or dependencies in the archive.
+- `npm run release:check` remains blocked only by the recorded live release gates. No email-service configuration is required.
 
-Remaining live tests are in [RELEASE_STATUS.md](RELEASE_STATUS.md). GitHub rejected an explicit CI dispatch with HTTP 422: "Actions has been disabled for this user." The repository workflow and repository-level Actions are enabled; account-level CI is blocked and no remote test run passed. Source/build checks do not establish mobile support or real provider compatibility.
+These fixture checks do not establish a clean installed Chrome flow, real provider compatibility, or cross-platform behavior. Live evidence remains false until those checks are performed. See [RELEASE_STATUS.md](RELEASE_STATUS.md).
+
+## Prior candidate: 1.0.0 (superseded)
+
+The previous verified-email candidate passed 46 test files / 292 tests, formatting, lint, strict TypeScript, and production build. Its 243,987-byte ZIP was only a review build. The email backend was never deployed. Those backend gates no longer apply to 1.0.1.
+
+The previous dependency audit reported zero vulnerabilities after Vitest and coverage were patched to 4.1.11. This change adds no dependencies. Redacted history scanning found no leaks.
+
+The GitHub repo was created as public, but the unauthenticated public URL returned 404. Manual CI dispatch returned HTTP 422: "Actions has been disabled for this user." No remote CI pass or public store release is claimed. Privacy/support URLs and the remaining live checks must work before submission.

@@ -1,6 +1,6 @@
 {
   "name": "watchbetter",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "type": "module",
   "description": "A YouTube caption preview, signed-in AI Ask, and Smart Skip companion.",

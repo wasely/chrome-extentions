@@ -38,30 +38,28 @@ export function AccessGate({
         .catch(() => {
           if (active) {
             setStatus({ kind: 'signed-out' });
-            setError('Could not check sign-in. Open settings to reconnect.');
+            setError('Could not check access. Open settings to retry.');
           }
         });
     };
     refresh();
     const unsubscribe = subscribePublicChanges(refresh);
-    const timer = window.setInterval(refresh, 300_000);
     return () => {
       active = false;
       unsubscribe();
-      window.clearInterval(timer);
     };
   }, []);
   useEffect(() => {
-    if (status?.kind !== 'verified') onLockedVisibilityChange?.(enabled || emailEntry);
+    if (status?.kind !== 'unlocked') onLockedVisibilityChange?.(enabled || emailEntry);
   }, [enabled, emailEntry, status?.kind, onLockedVisibilityChange]);
   if (!enabled && !emailEntry) return null;
-  if (status?.kind === 'verified') return children;
+  if (status?.kind === 'unlocked') return children;
   return (
     <div className="wb-access">
       {emailEntry && status ? (
         <AccountPanel
           initialStatus={status}
-          onVerified={() => {
+          onUnlocked={() => {
             void publicRequest({ type: 'public:auth-status' }).then(setStatus);
           }}
         />
@@ -74,13 +72,11 @@ export function AccessGate({
             </button>
           )}
           <h2>
-            {status ? 'Verify your email. Unlock everything.' : 'Checking access…'}
+            {status ? 'Enter your email. Unlock everything.' : 'Checking access…'}
           </h2>
           <p>
             {error ||
-              (status?.kind === 'unconfigured'
-                ? 'Email sign-in is not available yet. Please contact support.'
-                : 'One email, one code. No password or subscription.')}
+              'Enter your email in settings. No verification code or subscription.'}
           </p>
           <button
             className="wb-account__primary"

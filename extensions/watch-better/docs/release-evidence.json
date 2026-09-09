@@ -1,12 +1,12 @@
 {
-  "candidateVersion": "1.0.0",
-  "emailDelivery": false,
-  "accountDeletion": false,
+  "candidateVersion": "1.0.1",
   "cleanInstall": false,
   "embeddedProviders": false,
   "personalApiProviders": false,
   "youtubeLifecycle": false,
   "desktopPlatforms": false,
   "storeAssetsReviewed": false,
-  "notes": "Live checks pending; do not submit this candidate."
+  "notes": "Live checks pending; do not submit this candidate.",
+  "localEmailAccess": false,
+  "publicLinks": false
 }

@@ -3,7 +3,7 @@
 ## Project
 
 WXT/React/strict-TypeScript Chrome extension for YouTube caption previews, transcript navigation, signed-in ChatGPT/Gemini Ask, detachable panels, and Smart Skip.
-Public release scope: Supabase email-code access, Resend delivery, optional personal APIs, and embedded AI. No provider cookie/token access, analytics, video download, bundled server secrets, or default transcript persistence. See docs/RELEASE_STATUS.md.
+Public release scope: local email entry (no verification, backend, or email delivery), optional personal APIs, and embedded AI. No provider cookie/token access, analytics, video download, bundled server secrets, or default transcript persistence. See docs/RELEASE_STATUS.md.
 
 ## Commands
 

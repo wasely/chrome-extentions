@@ -20,9 +20,7 @@ describe('OptionsView', () => {
     expect(
       screen.getByRole('heading', { name: 'AI sessions and privacy' }),
     ).toBeInTheDocument();
-    expect(
-      screen.getByText(/Email sign-in is handled by Supabase and Resend/),
-    ).toBeInTheDocument();
+    expect(screen.getByText(/Your email stays in this browser/)).toBeInTheDocument();
     expect(document.body).not.toHaveTextContent(/DeepSeek/i);
     expect(screen.getByText('Settings loaded')).toBeInTheDocument();
   });

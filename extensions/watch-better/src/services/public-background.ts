@@ -13,13 +13,7 @@ const object = (value: unknown): Record<string, unknown> =>
   value && typeof value === 'object' && !Array.isArray(value)
     ? (value as Record<string, unknown>)
     : {};
-export const authService = new AuthService(
-  {
-    url: (import.meta.env.VITE_SUPABASE_URL ?? '').replace(/\/$/, ''),
-    publishableKey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY ?? '',
-  },
-  browser.storage.local,
-);
+export const authService = new AuthService(browser.storage.local);
 export const apiService = new ApiService();
 let cleanupFrames: () => Promise<void> = () => Promise.resolve();
 export function registerPublicCleanup(cleanup: () => Promise<void>): void {
@@ -66,7 +60,7 @@ export async function handlePublicRequest(
       return {
         ok: true,
         value:
-          status.kind === 'verified' && !trustedPage
+          status.kind === 'unlocked' && !trustedPage
             ? { ...status, email: '' }
             : status,
       };
@@ -110,21 +104,20 @@ export async function handlePublicRequest(
       return { ok: true, value: await apiService.status() };
     if (request.type === 'public:api-mode') {
       if (
-        (await authService.status()).kind !== 'verified' ||
+        (await authService.status()).kind !== 'unlocked' ||
         typeof request.enabled !== 'boolean'
       )
-        throw new Error('Verify your email first.');
+        throw new Error('Enter your email first.');
       const value = await apiService.setMode(request.enabled);
       await notifyPublicChange();
       return { ok: true, value };
     }
-    if (!trustedPage)
-      throw new Error('Open extension settings to manage your account.');
+    if (!trustedPage) throw new Error('Open extension settings to manage your email.');
     if (typeof request.type === 'string' && request.type.startsWith('public:api-')) {
       if (new URL(sender.url ?? '').pathname !== '/options.html')
         throw new Error('Use the extension settings page to manage API access.');
-      if ((await authService.status()).kind !== 'verified')
-        throw new Error('Verify your email first.');
+      if ((await authService.status()).kind !== 'unlocked')
+        throw new Error('Enter your email first.');
       let value: unknown;
       switch (request.type) {
         case 'public:api-configure':
@@ -152,24 +145,14 @@ export async function handlePublicRequest(
       await notifyPublicChange();
       return { ok: true, value };
     }
-    if (request.type === 'public:send-code') {
+    if (request.type === 'public:enter-email') {
       if (typeof request.email !== 'string') throw new Error('Enter an email address.');
-      await authService.requestCode(request.email);
-      return { ok: true, value: { kind: 'signed-out' } };
-    }
-    if (request.type === 'public:verify-code') {
-      if (typeof request.email !== 'string' || typeof request.code !== 'string')
-        throw new Error('Enter your email and code.');
-      const value = await authService.verifyCode(request.email, request.code);
+      const value = await authService.enterEmail(request.email);
       await notifyPublicChange();
       return { ok: true, value };
     }
-    if (
-      request.type === 'public:sign-out' ||
-      request.type === 'public:delete-account'
-    ) {
-      if (request.type === 'public:delete-account') await authService.deleteAccount();
-      else await authService.signOut();
+    if (request.type === 'public:sign-out') {
+      await authService.signOut();
       await apiService.disconnect();
       await cleanupFrames();
       await browser.storage.session.clear();
@@ -256,8 +239,8 @@ export function registerApiPorts(storageReady: Promise<unknown>): void {
         try {
           await storageReady;
           if (controller.signal.aborted) return;
-          if ((await authService.status()).kind !== 'verified')
-            throw new Error('Verify your email before using AI.');
+          if ((await authService.status()).kind !== 'unlocked')
+            throw new Error('Enter your email before using AI.');
           const status = await apiService.status();
           if (!status.configuration?.enabled)
             throw new Error('Select Personal API before sending.');

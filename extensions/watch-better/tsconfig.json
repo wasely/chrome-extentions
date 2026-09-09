@@ -17,7 +17,6 @@
     "types": ["vitest/globals", "@testing-library/jest-dom"]
   },
   "include": [
-    "supabase/functions/**/*.ts",
     "entrypoints/**/*.ts",
     "entrypoints/**/*.tsx",
     "harness/**/*.ts",

@@ -1,6 +1,5 @@
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { AuthService } from './auth-service';
-
 function fixture() {
   const values: Record<string, unknown> = {};
   const storage = {
@@ -14,100 +13,63 @@ function fixture() {
       return Promise.resolve();
     },
   };
-  const fetcher = vi.fn<typeof fetch>();
-  let now = 1_800_000_000_000;
-  const service = new AuthService(
-    { url: 'https://project.supabase.co', publishableKey: 'public-test-key' },
-    storage,
-    fetcher,
-    () => now,
-  );
-  const verified = () =>
-    new Response(
-      JSON.stringify({
-        access_token: 'example-access',
-        refresh_token: 'example-refresh',
-        expires_in: 3600,
-        user: {
-          id: 'user-one',
-          email: 'viewer@example.com',
-          email_confirmed_at: '2026-01-01',
-        },
-      }),
-    );
-  return {
-    service,
-    values,
-    fetcher,
-    verified,
-    advance: (ms: number) => {
-      now += ms;
-    },
-  };
+  return { values, storage, service: new AuthService(storage) };
 }
-
-describe('public email authentication', () => {
-  it('fails closed without a backend and never unlocks an unconfirmed address', async () => {
+describe('local email access', () => {
+  afterEach(() => vi.unstubAllGlobals());
+  it('unlocks immediately, survives a restart, and never calls a server', async () => {
+    const fetcher = vi.fn(() => {
+      throw new Error('offline');
+    });
+    vi.stubGlobal('fetch', fetcher);
     const f = fixture();
-    expect((await f.service.status()).kind).toBe('signed-out');
-    f.fetcher.mockResolvedValueOnce(
-      new Response(
-        JSON.stringify({
-          access_token: 'x',
-          refresh_token: 'y',
-          expires_in: 3600,
-          user: { id: 'u', email: 'viewer@example.com' },
-        }),
-      ),
-    );
-    await expect(
-      f.service.verifyCode('viewer@example.com', '123456'),
-    ).rejects.toThrow();
-    expect((await f.service.status()).kind).toBe('signed-out');
+    expect(await f.service.status()).toEqual({ kind: 'signed-out' });
+    expect(await f.service.enterEmail('  Viewer@Example.com  ')).toEqual({
+      kind: 'unlocked',
+      email: 'viewer@example.com',
+    });
+    expect(await new AuthService(f.storage).status()).toEqual({
+      kind: 'unlocked',
+      email: 'viewer@example.com',
+    });
+    expect(fetcher).not.toHaveBeenCalled();
+    expect(f.values).toEqual({ 'watchbetter:email:v1': 'viewer@example.com' });
   });
-  it('unlocks after verification without returning tokens and remembers the session', async () => {
+  it.each([
+    '',
+    'bad',
+    'a@b',
+    'a b@example.com',
+    'a\u0000@example.com',
+    'a'.repeat(250) + '@example.com',
+  ])('rejects invalid email %j', async (email) => {
     const f = fixture();
-    f.fetcher.mockResolvedValueOnce(f.verified());
-    const state = await f.service.verifyCode('viewer@example.com', '123456');
-    expect(state).toMatchObject({ kind: 'verified', email: 'viewer@example.com' });
-    expect(JSON.stringify(state)).not.toMatch(/example-access|example-refresh/);
-    expect((await f.service.status()).kind).toBe('verified');
-    expect(f.fetcher).toHaveBeenCalledTimes(1);
+    await expect(f.service.enterEmail(email)).rejects.toThrow(/valid email/i);
+    expect(await f.service.status()).toEqual({ kind: 'signed-out' });
+    expect(f.values).toEqual({});
   });
-  it('retains verified access briefly during outages, but not after seven days', async () => {
+  it('removes email and legacy credentials locally', async () => {
     const f = fixture();
-    f.fetcher.mockResolvedValueOnce(f.verified());
-    await f.service.verifyCode('viewer@example.com', '123456');
-    f.advance(4_000_000);
-    f.fetcher.mockRejectedValue(new TypeError('offline'));
-    expect(await f.service.status()).toMatchObject({ kind: 'verified', offline: true });
-    f.advance(8 * 86400_000);
-    expect((await f.service.status()).kind).toBe('signed-out');
-  });
-  it('does not treat revoked refresh tokens as an offline outage', async () => {
-    const f = fixture();
-    f.fetcher.mockResolvedValueOnce(f.verified());
-    await f.service.verifyCode('viewer@example.com', '123456');
-    f.advance(4_000_000);
-    f.fetcher.mockResolvedValueOnce(new Response('{}', { status: 400 }));
-    expect((await f.service.status()).kind).toBe('signed-out');
-  });
-  it('validates addresses/codes before network and throttles resends', async () => {
-    const f = fixture();
-    await expect(f.service.requestCode('bad')).rejects.toThrow();
-    await expect(f.service.verifyCode('viewer@example.com', '123')).rejects.toThrow();
-    expect(f.fetcher).not.toHaveBeenCalled();
-    f.fetcher.mockResolvedValue(new Response('{}'));
-    await f.service.requestCode('viewer@example.com');
-    await expect(f.service.requestCode('viewer@example.com')).rejects.toThrow(/wait/i);
-    expect(f.fetcher).toHaveBeenCalledTimes(1);
-  });
-  it('clears local authentication on logout even if the provider is offline', async () => {
-    const f = fixture();
-    f.fetcher.mockResolvedValueOnce(f.verified());
-    await f.service.verifyCode('viewer@example.com', '123456');
-    f.fetcher.mockRejectedValue(new TypeError('offline'));
+    f.values['watchbetter:auth:v1'] = { bearer: 'obsolete-fixture' };
+    f.values['watchbetter:auth-resend:v1'] = { at: 1 };
+    await f.service.enterEmail('viewer@example.com');
     await f.service.signOut();
-    expect((await f.service.status()).kind).toBe('signed-out');
+    expect(f.values).toEqual({});
+    expect(await f.service.status()).toEqual({ kind: 'signed-out' });
+  });
+  it('does not trust corrupt stored data or reuse old authentication', async () => {
+    const f = fixture();
+    f.values['watchbetter:email:v1'] = { email: 'viewer@example.com' };
+    f.values['watchbetter:auth:v1'] = { email: 'old@example.com', bearer: 'obsolete' };
+    expect(await f.service.status()).toEqual({ kind: 'signed-out' });
+    expect(f.values['watchbetter:auth:v1']).toBeUndefined();
+  });
+  it('serializes removal after a pending email write', async () => {
+    const f = fixture();
+    await Promise.all([
+      f.service.enterEmail('viewer@example.com'),
+      f.service.signOut(),
+    ]);
+    expect(await f.service.status()).toEqual({ kind: 'signed-out' });
   });
 });

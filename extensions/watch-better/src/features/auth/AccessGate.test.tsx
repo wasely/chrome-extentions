@@ -24,8 +24,8 @@ describe('feature access gate', () => {
   beforeEach(() => {
     state.request.mockReset();
   });
-  it('fails closed while loading, when unconfigured, and after a network error', async () => {
-    state.request.mockResolvedValue({ kind: 'unconfigured' });
+  it('fails closed while loading, before email entry, and after a storage error', async () => {
+    state.request.mockResolvedValue({ kind: 'signed-out' });
     const visible = vi.fn();
     render(
       <AccessGate onLockedVisibilityChange={visible}>
@@ -33,7 +33,7 @@ describe('feature access gate', () => {
       </AccessGate>,
     );
     expect(screen.queryByText('Protected feature')).toBeNull();
-    await screen.findByText(/Email sign-in is not available/);
+    await screen.findByText('Enter your email. Unlock everything.');
     expect(visible).toHaveBeenCalledWith(true);
     expect(screen.getByRole('link', { name: 'Privacy' })).toBeVisible();
     expect(screen.getByRole('button', { name: 'Turn off Watch Better' })).toBeVisible();
@@ -44,15 +44,15 @@ describe('feature access gate', () => {
     });
     expect(screen.queryByText('Protected feature')).toBeNull();
   });
-  it('mounts features only after verification and unmounts on logout', async () => {
+  it('mounts features only after email entry and unmounts on logout', async () => {
     state.request.mockResolvedValue({ kind: 'signed-out' });
     render(
       <AccessGate>
         <button>Protected feature</button>
       </AccessGate>,
     );
-    await screen.findByText('Verify your email. Unlock everything.');
-    state.request.mockResolvedValue({ kind: 'verified', email: '', offline: false });
+    await screen.findByText('Enter your email. Unlock everything.');
+    state.request.mockResolvedValue({ kind: 'unlocked', email: '' });
     await act(async () => {
       state.changed();
       await Promise.resolve();

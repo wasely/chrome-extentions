@@ -702,7 +702,7 @@ function Harness() {
         </div>
       ) : (
         <div className="harness-options">
-          <AccountPanel initialStatus={{ kind: 'signed-out' }} />
+          <AccountPanel />
           <ApiSettings />
           <OptionsView
             onChange={updateOptions}

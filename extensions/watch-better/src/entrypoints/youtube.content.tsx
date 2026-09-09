@@ -110,11 +110,11 @@ export default defineContentScript({
     const quickLearn = new QuickLearnController(document, openQuickLearnOverlay);
     quickLearn.start();
     let extensionEnabled = true;
-    let verifiedAccess = false;
+    let emailAccess = false;
     let invalidated = false;
     let prefetchedVideoId: string | null = null;
     const prefetchTranscript = () => {
-      if (!extensionEnabled || !verifiedAccess || invalidated) return;
+      if (!extensionEnabled || !emailAccess || invalidated) return;
       const videoId = parseYouTubeVideoUrl(location.href)?.videoId;
       if (!videoId || videoId === prefetchedVideoId) return;
       prefetchedVideoId = videoId;
@@ -136,11 +136,11 @@ export default defineContentScript({
       void publicRequest({ type: 'public:auth-status' })
         .then((status) => {
           if (invalidated) return;
-          verifiedAccess = status.kind === 'verified';
+          emailAccess = status.kind === 'unlocked';
           prefetchTranscript();
         })
         .catch(() => {
-          verifiedAccess = false;
+          emailAccess = false;
         });
     };
     refreshAccess();

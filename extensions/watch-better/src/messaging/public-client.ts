@@ -3,9 +3,8 @@ import type { AuthStatus } from '@/features/auth/auth-service';
 
 export type PublicRequest =
   | { type: 'public:auth-status' }
-  | { type: 'public:send-code'; email: string }
-  | { type: 'public:verify-code'; email: string; code: string }
-  | { type: 'public:sign-out' | 'public:delete-account' }
+  | { type: 'public:enter-email'; email: string }
+  | { type: 'public:sign-out' }
   | { type: 'public:api-status' }
   | { type: 'public:api-mode'; enabled: boolean }
   | { type: 'public:api-configure'; config: unknown; key: string; remember: boolean }

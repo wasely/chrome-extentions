@@ -71,13 +71,12 @@ describe('public background privilege boundary', () => {
   });
   it('returns access state without email or tokens to YouTube', async () => {
     vi.spyOn(authService, 'status').mockResolvedValue({
-      kind: 'verified',
+      kind: 'unlocked',
       email: 'viewer@example.com',
-      offline: false,
     });
     expect(await handlePublicRequest({ type: 'public:auth-status' }, content)).toEqual({
       ok: true,
-      value: { kind: 'verified', email: '', offline: false },
+      value: { kind: 'unlocked', email: '' },
     });
     expect(
       (await handlePublicRequest({ type: 'public:auth-status' }, options)).value,
@@ -85,9 +84,8 @@ describe('public background privilege boundary', () => {
   });
   it('blocks account changes and secret storage reads from content scripts', async () => {
     for (const type of [
-      'public:send-code',
-      'public:verify-code',
-      'public:delete-account',
+      'public:enter-email',
+      'public:sign-out',
       'public:api-configure',
     ])
       expect(
@@ -98,7 +96,12 @@ describe('public background privilege boundary', () => {
           )
         ).ok,
       ).toBe(false);
-    for (const key of ['watchbetter:auth:v1', 'watchbetter:api-key:v1', '__proto__'])
+    for (const key of [
+      'watchbetter:email:v1',
+      'watchbetter:auth:v1',
+      'watchbetter:api-key:v1',
+      '__proto__',
+    ])
       expect(
         (
           await handlePublicRequest(
@@ -107,6 +110,41 @@ describe('public background privilege boundary', () => {
           )
         ).ok,
       ).toBe(false);
+  });
+  it('unlocks from settings immediately and removes email and API keys locally', async () => {
+    const entered = await handlePublicRequest(
+      { type: 'public:enter-email', email: 'viewer@example.com' },
+      options,
+    );
+    expect(entered).toEqual({
+      ok: true,
+      value: { kind: 'unlocked', email: 'viewer@example.com' },
+    });
+    expect(state.local['watchbetter:email:v1']).toBe('viewer@example.com');
+    expect(
+      (await handlePublicRequest({ type: 'public:auth-status' }, content)).value,
+    ).toEqual({ kind: 'unlocked', email: '' });
+    await apiService.configure(
+      { kind: 'gemini', model: 'test-model' },
+      'fixture-private-value',
+      true,
+    );
+    expect((await handlePublicRequest({ type: 'public:sign-out' }, options)).ok).toBe(
+      true,
+    );
+    expect(state.local['watchbetter:email:v1']).toBeUndefined();
+    expect(state.local['watchbetter:api-key:v1']).toBeUndefined();
+    expect(await authService.status()).toEqual({ kind: 'signed-out' });
+  });
+  it('rejects invalid email and removed code endpoints', async () => {
+    for (const message of [
+      { type: 'public:enter-email', email: 'bad' },
+      { type: 'public:enter-email', email: null },
+      { type: 'public:send-code', email: 'viewer@example.com' },
+      { type: 'public:verify-code', email: 'viewer@example.com', code: '123456' },
+    ])
+      expect((await handlePublicRequest(message, options)).ok).toBe(false);
+    expect(await authService.status()).toEqual({ kind: 'signed-out' });
   });
   it('keeps session keys private and removes them on disconnect', async () => {
     const configuration = { kind: 'gemini', model: 'test-model' };
