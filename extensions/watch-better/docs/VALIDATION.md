@@ -2,7 +2,7 @@
 
 ## Current candidate: 1.0.3, inline onboarding and consistent UI
 
-- `npm run validate` passed: formatting, lint, strict TypeScript, **46 files / 304 tests**, production build. The 309,468-byte ZIP was inspected: full-tab options, current collector host, no local-preview bypass, server credentials, source maps or environment files.
+- `npm run validate` passed: formatting, lint, strict TypeScript, **46 files / 304 tests**, production build. The candidate ZIP was inspected: full-tab options, current collector host, no local-preview bypass, server credentials, source maps or environment files.
 
 - Signup uses one email field and Enter, with collection consent disclosed beside the field. The actual presentation component sits inert and blurred behind it; the protected runtime and AI frames remain unmounted until access succeeds.
 - Top-frame YouTube content scripts can submit a consented signup; the response never returns the saved email. Deletion and private API management remain restricted to extension pages.
@@ -10,6 +10,10 @@
 - Settings use the same icon and neutral controls, one layout, a compact saved-account row, and a full Chrome tab.
 - The owner's existing `.output/local-test-1.0.1` folder is updated separately with the UI and a clearly labeled **1.0.3 local preview**. It retains local-only email storage, including an already-entered email; it is not the public collection candidate and must not be submitted.
 - Hosted collection and all unperformed release gates remain pending. No production bypass is included.
+
+### Popup polish follow-up
+
+The toolbar popup has consistent outer padding, an inset status row, a bordered settings button, and a smaller toggle. Hover changes color without shifting controls. Dark wide and light narrow fixture screenshots were inspected; the same CSS is copied into the existing local preview.
 
 ## Prior candidate: 1.0.2, private email collection
 
