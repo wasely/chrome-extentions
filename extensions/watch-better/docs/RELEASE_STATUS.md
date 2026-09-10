@@ -19,7 +19,7 @@ Status: **not ready to submit**. Public source and local candidate builds are fo
 
 ## Required live gates
 
-- [ ] Public GitHub accessibility: repository is created, API visibility is public, and the pushed commit is verified, but an unauthenticated browser currently receives 404. Privacy/support URLs must work publicly before submission.
+- [x] Public privacy and support: HTTPS pages on watch-better-emails.kaiguy432.workers.dev return 200 and are linked from the extension and listing packet. GitHub source remains publicly inaccessible; omit the optional homepage URL.
 - [ ] GitHub account Actions restriction: manual CI dispatch returned HTTP 422, "Actions has been disabled for this user." Repository Actions are enabled. Resolve the account restriction before running the three-OS workflow.
 - [ ] Restricted GitHub Issues token installed as a Worker secret; live consented signup, retry deduplication, deletion and retention cleanup verified. Collector is deployed but currently unconfigured.
 - [ ] Clean Chrome install: email entry without a code, restart persistence, removal/API cleanup, and re-entry.

@@ -48,3 +48,7 @@ The previous verified-email candidate passed 46 test files / 292 tests, formatti
 The previous dependency audit reported zero vulnerabilities after Vitest and coverage were patched to 4.1.11. This change adds no dependencies. Redacted history scanning found no leaks.
 
 The GitHub repo was created as public, but the unauthenticated public URL returned 404. Manual CI dispatch returned HTTP 422: "Actions has been disabled for this user." No remote CI pass or public store release is claimed. Privacy/support URLs and the remaining live checks must work before submission.
+
+## Final review follow-up
+
+Updated extension privacy/support links to deployed public Cloudflare pages. Both return HTTP 200 and were inspected in the browser. The collector still reports configured false. Full validation passed again: 46 files / 304 tests, lint, formatting, strict TypeScript and build. Nine backend tests pass; npm audit reports zero vulnerabilities. The rebuilt candidate ZIP contains the new links and no local-preview bypass or server credential. The existing local-preview folder was updated separately. Store packaging still correctly rejects eight missing live gates. See FINAL_REVIEW.md.

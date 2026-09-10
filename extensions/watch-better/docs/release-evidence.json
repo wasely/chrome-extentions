@@ -6,8 +6,8 @@
   "youtubeLifecycle": false,
   "desktopPlatforms": false,
   "storeAssetsReviewed": false,
-  "notes": "Live checks pending; do not submit this candidate.",
-  "publicLinks": false,
+  "notes": "Privacy and support pages verified on Cloudflare September 9, 2026. Collector remains unconfigured; store and GitHub browser sessions signed out. Other live checks pending; do not submit.",
+  "publicLinks": true,
   "emailCollection": false,
   "emailDeletion": false
 }

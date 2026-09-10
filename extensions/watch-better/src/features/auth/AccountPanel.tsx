@@ -172,7 +172,7 @@ export function AccountPanel({
       ) : null}
       <footer>
         <a
-          href="https://github.com/wasely/chrome-extentions/blob/main/extensions/watch-better/PRIVACY.md"
+          href="https://watch-better-emails.kaiguy432.workers.dev/privacy"
           target="_blank"
           rel="noreferrer"
         >
@@ -180,7 +180,7 @@ export function AccountPanel({
         </a>
         {!inline && (
           <a
-            href="https://github.com/wasely/chrome-extentions/issues"
+            href="https://watch-better-emails.kaiguy432.workers.dev/support"
             target="_blank"
             rel="noreferrer"
           >

@@ -34,6 +34,6 @@ Privacy, support, extension disable controls, and email management remain reacha
 
 Removing an email does not sign you out of ChatGPT or Gemini or delete provider-held conversations. Uninstalling clears local extension storage, including the deletion receipt, but cannot notify the collector; use Remove email before uninstalling to request early deletion. Otherwise the one-year retention applies. Each browser may create a separate signup record for the same unverified address; removal affects that browser's record.
 
-For support, [open an issue](https://github.com/wasely/chrome-extentions/issues) without posting your email, API keys or private content. See [security reporting](SECURITY.md) for sensitive reports.
+For help with access, deletion, captions or API connections, see the [support guide](https://watch-better-emails.kaiguy432.workers.dev/support). Never post your email, deletion receipt, API keys or private content publicly.
 
 Service policies: [GitHub](https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement), [Cloudflare](https://www.cloudflare.com/privacypolicy/), [OpenAI](https://openai.com/policies/privacy-policy/), [Google](https://policies.google.com/privacy). A custom API provider has its own policy.

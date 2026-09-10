@@ -22,9 +22,9 @@ Requires desktop Chrome 133+ and available YouTube captions. Mobile Chrome is un
 
 ## URLs and assets
 
-- Support: https://github.com/wasely/chrome-extentions/issues
-- Privacy: https://github.com/wasely/chrome-extentions/blob/main/extensions/watch-better/PRIVACY.md
-- Homepage: https://github.com/wasely/chrome-extentions
+- Support: https://watch-better-emails.kaiguy432.workers.dev/support
+- Privacy: https://watch-better-emails.kaiguy432.workers.dev/privacy
+- Homepage: omit for now; the GitHub source URL still returns 404 publicly.
 - Icons: public/icon (16, 32, 48, 128 pixels).
 - Final screenshots still required: actual transcript/search; actual AI answer with timestamps; email access/settings; Smart Skip development warning. Use 1280×800 or 640×400. Do not use fixture previews as evidence of a live feature.
 - Promotional tile: 440×280. Create from the approved product UI after live checks.
