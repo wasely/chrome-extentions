@@ -3,6 +3,8 @@ import { browser } from 'wxt/browser';
 import { publicRequest, subscribePublicChanges } from '@/messaging/public-client';
 import type { AuthStatus } from './auth-service';
 import { AccountPanel } from './AccountPanel';
+import { WatchBetterApp, type ResolvedTheme } from '@/app/WatchBetterApp';
+import type { ThemePreference } from '@/features/settings/settings';
 import { SettingsRepository } from '@/storage/settings-repository';
 
 export function AccessGate({
@@ -10,8 +12,10 @@ export function AccessGate({
   emailEntry = false,
   onLockedVisibilityChange,
   onClose,
+  theme: suppliedTheme,
 }: {
   readonly children: ReactNode;
+  readonly theme?: ResolvedTheme;
   readonly emailEntry?: boolean;
   readonly onLockedVisibilityChange?: (visible: boolean) => void;
   readonly onClose?: () => void;
@@ -19,13 +23,32 @@ export function AccessGate({
   const [status, setStatus] = useState<AuthStatus | null>(null);
   const [error, setError] = useState('');
   const [enabled, setEnabled] = useState(true);
+  const [preference, setPreference] = useState<ThemePreference>('system');
+  const [systemTheme, setSystemTheme] = useState<ResolvedTheme>(() =>
+    typeof matchMedia === 'function' &&
+    matchMedia('(prefers-color-scheme: dark)').matches
+      ? 'dark'
+      : 'light',
+  );
+  useEffect(() => {
+    if (typeof matchMedia !== 'function') return;
+    const query = matchMedia('(prefers-color-scheme: dark)');
+    const update = () => setSystemTheme(query.matches ? 'dark' : 'light');
+    query.addEventListener('change', update);
+    return () => query.removeEventListener('change', update);
+  }, []);
+  const theme = suppliedTheme ?? (preference === 'system' ? systemTheme : preference);
+
   useEffect(() => {
     let active = true;
     const refresh = () => {
       void new SettingsRepository()
         .load()
         .then((settings) => {
-          if (active) setEnabled(settings.extensionEnabled);
+          if (active) {
+            setEnabled(settings.extensionEnabled);
+            setPreference(settings.theme ?? 'system');
+          }
         })
         .catch(() => undefined);
       void publicRequest({ type: 'public:auth-status' })
@@ -55,61 +78,34 @@ export function AccessGate({
   if (!enabled && !emailEntry) return null;
   if (status?.kind === 'unlocked') return children;
   return (
-    <div className="wb-access">
-      {emailEntry && status ? (
-        <AccountPanel
-          initialStatus={status}
-          onUnlocked={() => {
-            void publicRequest({ type: 'public:auth-status' }).then(setStatus);
-          }}
-        />
-      ) : (
-        <section className="wb-account">
-          <span className="wb-account__eyebrow">Watch Better</span>
-          {onClose && (
-            <button type="button" onClick={onClose}>
-              Close
-            </button>
+    <div className="watchbetter-root wb-access" data-theme={theme}>
+      <div className="wb-access__preview" inert aria-hidden="true">
+        <WatchBetterApp theme={theme} preview />
+      </div>
+      <div className="wb-access__overlay">
+        <div className="wb-access__content">
+          {status ? (
+            <AccountPanel
+              initialStatus={status}
+              inline
+              onUnlocked={() => {
+                void publicRequest({ type: 'public:auth-status' })
+                  .then(setStatus)
+                  .catch(() => setError('Could not check access. Please try again.'));
+              }}
+            />
+          ) : (
+            <p role="status">Checking access…</p>
           )}
-          <h2>
-            {status ? 'Enter your email. Unlock everything.' : 'Checking access…'}
-          </h2>
-          <p>
-            {error ||
-              'Enter your email in settings. No verification code or subscription.'}
-          </p>
+          {error && <p role="alert">{error}</p>}
           <button
-            className="wb-account__primary"
+            className="wb-access__dismiss"
             type="button"
             onClick={() => {
-              void browser.runtime
-                .sendMessage({ type: 'settings:open' })
-                .catch(() =>
-                  setError('Open Watch Better options from Chrome’s extension menu.'),
-                );
-            }}
-          >
-            Open settings
-          </button>
-          <footer>
-            <a
-              href="https://github.com/wasely/chrome-extentions/blob/main/extensions/watch-better/PRIVACY.md"
-              target="_blank"
-              rel="noreferrer"
-            >
-              Privacy
-            </a>
-            <a
-              href="https://github.com/wasely/chrome-extentions/issues"
-              target="_blank"
-              rel="noreferrer"
-            >
-              Support
-            </a>
-          </footer>
-          <button
-            type="button"
-            onClick={() => {
+              if (onClose) {
+                onClose();
+                return;
+              }
               void browser.runtime
                 .sendMessage({ type: 'runtime:set-enabled', enabled: false })
                 .then((response: { ok?: boolean }) => {
@@ -120,10 +116,10 @@ export function AccessGate({
                 );
             }}
           >
-            Turn off Watch Better
+            {onClose ? 'Close' : 'Turn off Watch Better'}
           </button>
-        </section>
-      )}
+        </div>
+      </div>
     </div>
   );
 }

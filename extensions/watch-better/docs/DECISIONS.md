@@ -63,3 +63,9 @@ September 9, 2026 latest public-scope revision: the owner approved collecting un
 
 - Update provider selectors only after live DOM verification.
 - Add list virtualization only if real transcript profiling justifies it.
+
+## September 9 UI revision
+
+Signup is an inline email field over the inert, blurred Watch Better presentation. Enter consents to the adjacent collection disclosure and unlocks only after the signup is saved. Saved access persists per browser. The live runtime and provider frames stay unmounted while locked. Content-script signup replies contain access state only; account deletion stays in extension settings. The packaged eye icon is the single brand source. Settings open in a full tab.
+
+The isolated local preview preserves the earlier local-email behavior for the owner's current testing while the hosted collector remains unconfigured. It is labeled separately and excluded from store submission.

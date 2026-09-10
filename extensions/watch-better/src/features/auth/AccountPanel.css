@@ -1,46 +1,77 @@
+/* Account and API controls share the panel's neutral materials. */
 .wb-account {
+  --account-surface: var(--ct-surface-raised, #fff);
+  --account-input: var(--ct-input, #f2f4f7);
+  --account-border: var(--ct-border, #d1d7df);
+  --account-text: var(--ct-text-strong, #14181f);
+  --account-muted: var(--ct-text-muted, #667281);
+  --account-accent: var(--ct-accent, #252a31);
+  --account-on-accent: var(--ct-on-accent, #fff);
   box-sizing: border-box;
   width: 100%;
-  max-width: 620px;
-  margin: 0 auto;
-  padding: 24px;
-  border: 1px solid #d9dde5;
-  border-radius: 16px;
-  background: #fff;
-  color: #202632;
+  min-width: 0;
+  margin: 0;
+  padding: 20px;
+  border: 1px solid var(--account-border);
+  border-radius: 9px;
+  background: var(--account-surface);
+  color: var(--account-text);
   font:
-    14px/1.5 system-ui,
+    13px/1.5 'Segoe UI',
+    Inter,
+    system-ui,
     sans-serif;
   overflow-wrap: anywhere;
+}
+[data-theme='dark'] .wb-account {
+  --account-surface: #12151a;
+  --account-input: #090b0f;
+  --account-border: #292f38;
+  --account-text: #f4f6f8;
+  --account-muted: #87919d;
+  --account-accent: #e3e6ea;
+  --account-on-accent: #0a0c10;
 }
 .wb-account * {
   box-sizing: border-box;
 }
 .wb-account h2 {
-  font-size: 23px;
-  line-height: 1.2;
-  margin: 8px 0 12px;
-  letter-spacing: -0.5px;
+  font-size: 17px;
+  line-height: 1.35;
+  margin: 0 0 14px;
+  font-weight: 600;
+  letter-spacing: -0.3px;
 }
-.wb-account__eyebrow {
+.wb-account p {
+  margin: 8px 0;
+}
+.wb-account__brand {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 20px;
   font-size: 12px;
-  font-weight: 700;
-  color: #536070;
+  font-weight: 600;
+}
+.wb-account__brand img {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
 }
 .wb-account form {
   display: flex;
   flex-direction: column;
-  gap: 9px;
-  margin: 18px 0 12px;
+  gap: 10px;
+  margin: 14px 0 12px;
 }
 .wb-account input,
 .wb-account select,
 .wb-account textarea {
   width: 100%;
   min-width: 0;
-  border: 1px solid #b8c0cd;
-  border-radius: 8px;
-  background: #f8f9fb;
+  border: 1px solid var(--account-border);
+  border-radius: 7px;
+  background: var(--account-input);
   color: inherit;
   padding: 11px 12px;
   font: inherit;
@@ -48,137 +79,163 @@
 .wb-account input[type='checkbox'] {
   width: 18px;
   height: 18px;
+  accent-color: var(--account-accent);
 }
 .wb-account button {
-  min-height: 42px;
-  border: 1px solid #b8c0cd;
-  border-radius: 8px;
-  background: #f3f5f8;
+  min-height: 36px;
+  border: 1px solid var(--account-border);
+  border-radius: 7px;
+  background: var(--account-input);
   color: inherit;
-  padding: 8px 13px;
+  padding: 7px 11px;
   font: inherit;
   font-weight: 600;
   cursor: pointer;
 }
-.wb-account .wb-account__primary,
-[data-theme] .wb-account .wb-account__primary {
-  background: #214ecf;
-  border-color: #214ecf;
-  color: #fff;
+.wb-account button:hover:not(:disabled) {
+  filter: brightness(1.12);
 }
 .wb-account button:disabled {
-  opacity: 0.55;
-  cursor: default;
+  opacity: 0.6;
+  cursor: wait;
 }
 .wb-account :focus-visible {
-  outline: 3px solid #679bff;
-  outline-offset: 3px;
+  outline: 2px solid var(--account-accent);
+  outline-offset: 2px;
+}
+.wb-account__entry {
+  display: flex;
+  align-items: stretch;
+  gap: 6px;
+}
+.wb-account .wb-account__primary {
+  display: grid;
+  place-items: center;
+  flex: 0 0 42px;
+  background: var(--account-accent);
+  color: var(--account-on-accent);
+  border-color: var(--account-accent);
+}
+.wb-account__primary svg {
+  width: 18px;
+  height: 18px;
 }
 .wb-account__actions {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin: 12px 0;
+  margin: 12px 0 0;
 }
 .wb-account small {
   display: block;
-  font-size: 12px;
-  color: #536070;
+  font-size: 11px;
+  line-height: 1.6;
+  color: var(--account-muted);
 }
 .wb-account footer {
   display: flex;
-  gap: 16px;
-  margin-top: 20px;
+  gap: 14px;
+  margin-top: 12px;
+  font-size: 11px;
 }
 .wb-account a {
-  color: #244fca;
+  color: var(--account-muted);
+  text-underline-offset: 3px;
 }
 .wb-account__error {
-  color: #ac2333;
+  color: var(--ct-error, #cc5260);
 }
-.wb-access {
-  padding: 16px;
-}
-.wb-access .wb-account {
-  max-width: none;
-}
-@media (prefers-color-scheme: dark) {
-  .wb-account {
-    background: #14171e;
-    color: #edf0f7;
-    border-color: #343b49;
-  }
-  .wb-account input,
-  .wb-account select,
-  .wb-account textarea,
-  .wb-account button {
-    background: #222731;
-    border-color: #525b6c;
-  }
-  .wb-account small,
-  .wb-account__eyebrow {
-    color: #b5becc;
-  }
-  .wb-account a {
-    color: #9bb7ff;
-  }
-  .wb-account__error {
-    color: #ff9dab;
-  }
+.wb-account__sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 .wb-account + .wb-account {
   margin-top: 16px;
 }
-[data-theme='dark'] .wb-account {
-  background: #14171e;
-  color: #edf0f7;
-  border-color: #343b49;
+.wb-access {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border: 1px solid var(--ct-border);
+  border-radius: var(--ct-radius-lg);
+  color: var(--ct-text-strong);
 }
-[data-theme='dark'] .wb-account :is(input, select, textarea, button) {
-  background: #222731;
-  border-color: #525b6c;
+.wb-access__preview {
+  filter: blur(4px);
+  pointer-events: none;
+  user-select: none;
+  opacity: 0.48;
 }
-[data-theme='dark'] .wb-account :is(small, .wb-account__eyebrow) {
-  color: #b5becc;
+.wb-access__preview * {
+  animation: none !important;
 }
-[data-theme='dark'] .wb-account a {
-  color: #9bb7ff;
+.wb-access__overlay {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  align-items: center;
+  justify-items: center;
+  padding: 24px 16px;
+  overflow-y: auto;
+  background: color-mix(in srgb, var(--ct-surface) 45%, transparent);
 }
-[data-theme='light'] .wb-account {
-  background: #fff;
-  color: #202632;
-  border-color: #d9dde5;
+.wb-access__content {
+  width: 100%;
+  max-width: 310px;
+  margin-block: auto;
 }
-[data-theme='light'] .wb-account :is(input, select, textarea, button) {
-  background: #f8f9fb;
-  border-color: #b8c0cd;
+.wb-access .wb-account {
+  border: 0;
+  padding: 0;
+  background: transparent;
 }
-[data-theme='light'] .wb-account :is(small, .wb-account__eyebrow) {
-  color: #536070;
+.wb-access .wb-account h2 {
+  font-size: 18px;
 }
-[data-theme='light'] .wb-account a {
-  color: #244fca;
+.wb-access__dismiss {
+  display: block;
+  margin-top: 12px;
+  padding: 0;
+  min-height: 28px;
+  border: 0;
+  background: transparent;
+  color: var(--ct-text-muted);
+  font: inherit;
+  font-size: 11px;
+  cursor: pointer;
 }
-.wb-account .wb-account__primary,
-[data-theme] .wb-account .wb-account__primary {
-  background: #214ecf;
-  color: #fff;
-}
-@media (max-width: 320px) {
-  .wb-account {
-    padding: 16px;
-  }
+.wb-access__dismiss:hover {
+  color: var(--ct-text-strong);
 }
 
-.wb-account__consent {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
+.wb-account--unlocked {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: 16px;
+}
+.wb-account--unlocked h2 {
+  grid-column: 1;
+  font-size: 14px;
+  margin-bottom: 2px;
+}
+.wb-account--unlocked > p {
+  grid-column: 1;
+  margin: 0;
+  color: var(--account-muted);
   font-size: 12px;
 }
-.wb-account__consent input[type='checkbox'] {
-  flex: 0 0 18px;
-  margin: 2px 0 0;
-  padding: 0;
-  accent-color: #214ecf;
+.wb-account--unlocked .wb-account__actions {
+  grid-column: 2;
+  grid-row: 1 / 3;
+  align-self: center;
+  margin: 0;
+}
+.wb-account--unlocked footer {
+  grid-column: 1 / -1;
 }

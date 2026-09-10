@@ -120,11 +120,9 @@ function Options() {
 
   return (
     <>
-      <div style={{ padding: '24px 16px 0' }}>
-        <AccountPanel />
-        <ApiSettings />
-      </div>
       <OptionsView
+        account={<AccountPanel />}
+        advanced={<ApiSettings />}
         disabled={!loaded || saving}
         onChange={(next) => void save(next)}
         onManageExtension={() => void manageExtension()}

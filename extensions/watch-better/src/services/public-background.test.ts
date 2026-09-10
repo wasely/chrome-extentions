@@ -118,6 +118,15 @@ describe('public background privilege boundary', () => {
         ).ok,
       ).toBe(false);
   });
+  it('accepts consented inline signup without returning the saved email', async () => {
+    expect(
+      await handlePublicRequest(
+        { type: 'public:enter-email', email: 'viewer@example.com', consent: true },
+        content,
+      ),
+    ).toEqual({ ok: true, value: { kind: 'unlocked', email: '' } });
+    expect(state.local['watchbetter:signup:v2']).toMatchObject({ state: 'collected' });
+  });
   it('unlocks from settings immediately and removes email and API keys locally', async () => {
     const entered = await handlePublicRequest(
       { type: 'public:enter-email', email: 'viewer@example.com', consent: true },

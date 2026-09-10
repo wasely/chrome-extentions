@@ -45,7 +45,7 @@ Declare email/personal information, authentication information and website conte
 
 ## Reviewer instructions
 
-Install the final ZIP, open Options, enter an email address, select the consent checkbox and Continue. The collector must confirm storage before access unlocks. No verification email is sent. Remove email deletes that signup and disconnects personal APIs. No password or paid Watch Better account is required. Open a captioned YouTube video to use transcripts. For embedded AI, sign into ChatGPT/Gemini through their normal pages when prompted. API fallback is optional and requires the reviewer's own provider key. Smart Skip is off; leave it off unless reviewing the experimental controls.
+Install the final ZIP, open a YouTube video, enter an email address over the blurred panel, and press Enter to consent to the visible collection disclosure. Options offers the same form. The collector must confirm storage before access unlocks. No verification email is sent. Remove email deletes that signup and disconnects personal APIs. No password or paid Watch Better account is required. Open a captioned YouTube video to use transcripts. For embedded AI, sign into ChatGPT/Gemini through their normal pages when prompted. API fallback is optional and requires the reviewer's own provider key. Smart Skip is off; leave it off unless reviewing the experimental controls.
 
 Verify email entry, persistence after restarting Chrome, removal, and re-entry on the final package. The private signup collector must be active; no email delivery service is used.
 

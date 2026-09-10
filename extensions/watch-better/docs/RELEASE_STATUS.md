@@ -1,8 +1,11 @@
-# Watch Better 1.0.2 candidate
+# Watch Better 1.0.3 candidate
 
 Status: **not ready to submit**. Public source and local candidate builds are for review; they are not an approved store release.
 
 ## Implemented
+
+- Inline email entry over an inert, blurred panel. Enter submits consent with a short visible disclosure; access persists in this browser. No settings detour or checkbox.
+- Shared installed icon throughout the panel, signup, popup and settings. Neutral controls match the existing panel; settings open in a full tab.
 
 - English UI, English caption preference with original/manual fallback, English AI instructions.
 - Smart Skip disabled by default, legacy opt-in reset, persistent development warning.

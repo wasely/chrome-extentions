@@ -289,3 +289,20 @@ select {
     transition-duration: 0.01ms !important;
   }
 }
+
+@media (max-width: 760px) {
+  .harness-stage {
+    min-width: 0;
+    grid-template-columns: minmax(0, 1fr);
+    padding: 12px;
+  }
+  .harness-video {
+    position: relative;
+    top: auto;
+    height: 140px;
+  }
+  .harness-column {
+    max-width: 100%;
+    justify-self: center;
+  }
+}

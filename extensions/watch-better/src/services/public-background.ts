@@ -116,6 +116,15 @@ export async function handlePublicRequest(
       await notifyPublicChange();
       return { ok: true, value };
     }
+    if (request.type === 'public:enter-email') {
+      if (typeof request.email !== 'string') throw new Error('Enter an email address.');
+      const value = await authService.enterEmail(
+        request.email,
+        request.consent === true,
+      );
+      await notifyPublicChange();
+      return { ok: true, value: trustedPage ? value : { kind: value.kind, email: '' } };
+    }
     if (!trustedPage) throw new Error('Open extension settings to manage your email.');
     if (typeof request.type === 'string' && request.type.startsWith('public:api-')) {
       if (new URL(sender.url ?? '').pathname !== '/options.html')
@@ -146,15 +155,6 @@ export async function handlePublicRequest(
         default:
           throw new Error('Unsupported API action.');
       }
-      await notifyPublicChange();
-      return { ok: true, value };
-    }
-    if (request.type === 'public:enter-email') {
-      if (typeof request.email !== 'string') throw new Error('Enter an email address.');
-      const value = await authService.enterEmail(
-        request.email,
-        request.consent === true,
-      );
       await notifyPublicChange();
       return { ok: true, value };
     }

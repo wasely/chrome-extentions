@@ -4,6 +4,7 @@ import { createRoot } from 'react-dom/client';
 import { WatchBetterApp, type ResolvedTheme } from '@/app/WatchBetterApp';
 import { OptionsView } from '@/entrypoints/options/OptionsView';
 import { PopupView, type PopupAction } from '@/entrypoints/popup/PopupView';
+import { AccessGate } from '@/features/auth/AccessGate';
 import { AccountPanel } from '@/features/auth/AccountPanel';
 import { ApiSettings } from '@/features/ask/ApiSettings';
 import {
@@ -561,127 +562,133 @@ function Harness() {
             <div
               className={`harness-panel-host${askFocused ? ' harness-panel-host--focus' : ''}${floatingMode ? ' harness-panel-host--floating' : ''}`}
             >
-              <WatchBetterApp
-                ask={{
-                  transcript:
-                    transcriptState.kind === 'ready' ? transcriptState.document : null,
-                  selectedSegmentIds: askSelectedSegmentIds,
-                  currentTimeSeconds: activeSegment?.startSeconds ?? null,
-                  initialScope: scenario === 'selected' ? 'selection' : 'entire-video',
-                  providerStatuses: {
-                    chatgpt: {
-                      provider: 'chatgpt',
-                      state: providerFrameState,
+              <AccessGate theme={theme}>
+                <WatchBetterApp
+                  ask={{
+                    transcript:
+                      transcriptState.kind === 'ready'
+                        ? transcriptState.document
+                        : null,
+                    selectedSegmentIds: askSelectedSegmentIds,
+                    currentTimeSeconds: activeSegment?.startSeconds ?? null,
+                    initialScope:
+                      scenario === 'selected' ? 'selection' : 'entire-video',
+                    providerStatuses: {
+                      chatgpt: {
+                        provider: 'chatgpt',
+                        state: providerFrameState,
+                      },
+                      gemini: { provider: 'gemini', state: 'ready' },
                     },
-                    gemini: { provider: 'gemini', state: 'ready' },
-                  },
-                  onSendWebChat: ({ provider }) =>
-                    Promise.resolve({
-                      provider,
-                      responseId: `web_${provider}_fixture`,
-                      text: 'The video supports this point at [00:08] and adds context at [00:24].',
-                    }),
-                  onOpenWebChat: () =>
-                    openShouldFail
-                      ? Promise.reject(new Error('Fixture tab failure.'))
-                      : Promise.resolve(),
-                  onPrepareWebChat: () =>
-                    frameShouldFail
-                      ? Promise.reject(new Error('Fixture frame binding failure.'))
-                      : Promise.resolve(),
-                  ...(floatingMode
+                    onSendWebChat: ({ provider }) =>
+                      Promise.resolve({
+                        provider,
+                        responseId: `web_${provider}_fixture`,
+                        text: 'The video supports this point at [00:08] and adds context at [00:24].',
+                      }),
+                    onOpenWebChat: () =>
+                      openShouldFail
+                        ? Promise.reject(new Error('Fixture tab failure.'))
+                        : Promise.resolve(),
+                    onPrepareWebChat: () =>
+                      frameShouldFail
+                        ? Promise.reject(new Error('Fixture frame binding failure.'))
+                        : Promise.resolve(),
+                    ...(floatingMode
+                      ? {
+                          quickLearn: {
+                            thumbnailUrl:
+                              'https://i.ytimg.com/vi/fixture/hqdefault.jpg',
+                          },
+                        }
+                      : {}),
+                  }}
+                  activeTab={panelTab}
+                  collapsed={collapsed}
+                  initialAskFocused={askFocused}
+                  key={`${instance}-${scenario}`}
+                  onAskFocusChange={setAskFocused}
+                  onCollapsedChange={setCollapsed}
+                  onOpenSettings={() => setSurface('options')}
+                  onTabChange={setPanelTab}
+                  {...(floatingMode
                     ? {
-                        quickLearn: {
-                          thumbnailUrl: 'https://i.ytimg.com/vi/fixture/hqdefault.jpg',
-                        },
+                        presentation: 'floating' as const,
+                        videoTitle: 'Quick Learn fixture video',
+                        minimized: false,
+                        onClose: () => undefined,
+                        onMinimizedChange: () => undefined,
+                        onToggleMaximized: () => undefined,
                       }
-                    : {}),
-                }}
-                activeTab={panelTab}
-                collapsed={collapsed}
-                initialAskFocused={askFocused}
-                key={`${instance}-${scenario}`}
-                onAskFocusChange={setAskFocused}
-                onCollapsedChange={setCollapsed}
-                onOpenSettings={() => setSurface('options')}
-                onTabChange={setPanelTab}
-                {...(floatingMode
-                  ? {
-                      presentation: 'floating' as const,
-                      videoTitle: 'Quick Learn fixture video',
-                      minimized: false,
-                      onClose: () => undefined,
-                      onMinimizedChange: () => undefined,
-                      onToggleMaximized: () => undefined,
-                    }
-                  : {})}
-                theme={theme}
-                smartSkip={{
-                  configuration: smartSkipConfiguration,
-                  analysisState: smartSkipAnalysisState,
-                  refinementState: smartSkipRefinementState,
-                  refinementRequested: smartSkipRefinementRequested,
-                  durationSeconds:
-                    transcriptState.kind === 'ready'
-                      ? transcriptState.document.durationSeconds
-                      : null,
-                  engineSnapshot: {
-                    state:
-                      smartSkipAnalysisState.kind === 'ready' &&
-                      smartSkipConfiguration.autoSkip
-                        ? 'ready'
-                        : 'disabled',
-                    timeSavedSeconds:
-                      smartSkipAnalysisState.kind === 'ready' &&
-                      smartSkipConfiguration.autoSkip
-                        ? 18
-                        : 0,
-                    lastSkipped: null,
-                    basePlaybackRate: 1,
-                    message:
-                      smartSkipAnalysisState.kind === 'ready' &&
-                      smartSkipConfiguration.autoSkip
-                        ? 'Smart Skip is monitoring playback.'
-                        : 'Playback is unchanged.',
-                  },
-                  onConfigurationChange: setSmartSkipConfiguration,
-                  onEnabledChange: (enabled) =>
-                    setSmartSkipConfiguration((current) => ({
-                      ...current,
-                      autoSkip: enabled,
-                    })),
-                  onIntervalEnabledChange: (intervalId, enabled) =>
-                    setDisabledSmartSkipIntervalIds((current) => {
-                      const next = new Set(current);
-                      if (enabled) next.delete(intervalId);
-                      else next.add(intervalId);
-                      return next;
-                    }),
-                  onRefinementRequest: () => setSmartSkipRefinementRequested(true),
-                  onSeek: () => undefined,
-                  transcriptAvailable: transcriptState.kind === 'ready',
-                }}
-                transcript={{
-                  state: transcriptState,
-                  activeSegmentId: activeSegment?.id ?? null,
-                  initialQuery: scenario === 'search' ? 'evidence' : '',
-                  ...(selectedFixtureIds
-                    ? { initialSelectedSegmentIds: selectedFixtureIds }
-                    : {}),
-                  onSendToAI: () => undefined,
-                  onCopy: () => Promise.resolve(),
-                  onEnableTranscript: () => changeScenario('tutorial'),
-                  onRetry: () => changeScenario('tutorial'),
-                  onSeek: (segment) => {
-                    if (transcriptState.kind !== 'ready') return;
-                    const index = transcriptState.document.segments.findIndex(
-                      (candidate) => candidate.id === segment.id,
-                    );
-                    if (index >= 0) setActiveIndex(index);
-                  },
-                  onTrackChange: setSelectedTrackId,
-                }}
-              />
+                    : {})}
+                  theme={theme}
+                  smartSkip={{
+                    configuration: smartSkipConfiguration,
+                    analysisState: smartSkipAnalysisState,
+                    refinementState: smartSkipRefinementState,
+                    refinementRequested: smartSkipRefinementRequested,
+                    durationSeconds:
+                      transcriptState.kind === 'ready'
+                        ? transcriptState.document.durationSeconds
+                        : null,
+                    engineSnapshot: {
+                      state:
+                        smartSkipAnalysisState.kind === 'ready' &&
+                        smartSkipConfiguration.autoSkip
+                          ? 'ready'
+                          : 'disabled',
+                      timeSavedSeconds:
+                        smartSkipAnalysisState.kind === 'ready' &&
+                        smartSkipConfiguration.autoSkip
+                          ? 18
+                          : 0,
+                      lastSkipped: null,
+                      basePlaybackRate: 1,
+                      message:
+                        smartSkipAnalysisState.kind === 'ready' &&
+                        smartSkipConfiguration.autoSkip
+                          ? 'Smart Skip is monitoring playback.'
+                          : 'Playback is unchanged.',
+                    },
+                    onConfigurationChange: setSmartSkipConfiguration,
+                    onEnabledChange: (enabled) =>
+                      setSmartSkipConfiguration((current) => ({
+                        ...current,
+                        autoSkip: enabled,
+                      })),
+                    onIntervalEnabledChange: (intervalId, enabled) =>
+                      setDisabledSmartSkipIntervalIds((current) => {
+                        const next = new Set(current);
+                        if (enabled) next.delete(intervalId);
+                        else next.add(intervalId);
+                        return next;
+                      }),
+                    onRefinementRequest: () => setSmartSkipRefinementRequested(true),
+                    onSeek: () => undefined,
+                    transcriptAvailable: transcriptState.kind === 'ready',
+                  }}
+                  transcript={{
+                    state: transcriptState,
+                    activeSegmentId: activeSegment?.id ?? null,
+                    initialQuery: scenario === 'search' ? 'evidence' : '',
+                    ...(selectedFixtureIds
+                      ? { initialSelectedSegmentIds: selectedFixtureIds }
+                      : {}),
+                    onSendToAI: () => undefined,
+                    onCopy: () => Promise.resolve(),
+                    onEnableTranscript: () => changeScenario('tutorial'),
+                    onRetry: () => changeScenario('tutorial'),
+                    onSeek: (segment) => {
+                      if (transcriptState.kind !== 'ready') return;
+                      const index = transcriptState.document.segments.findIndex(
+                        (candidate) => candidate.id === segment.id,
+                      );
+                      if (index >= 0) setActiveIndex(index);
+                    },
+                    onTrackChange: setSelectedTrackId,
+                  }}
+                />
+              </AccessGate>
             </div>
             {!neighborFirst ? <NeighborCard /> : null}
           </aside>
@@ -702,9 +709,9 @@ function Harness() {
         </div>
       ) : (
         <div className="harness-options">
-          <AccountPanel />
-          <ApiSettings />
           <OptionsView
+            account={<AccountPanel />}
+            advanced={<ApiSettings />}
             onChange={updateOptions}
             settings={optionsSettings}
             status={optionsStatus}

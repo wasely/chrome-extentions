@@ -1,6 +1,17 @@
 # Candidate validation — September 9, 2026
 
-## Current candidate: 1.0.2, private email collection
+## Current candidate: 1.0.3, inline onboarding and consistent UI
+
+- `npm run validate` passed: formatting, lint, strict TypeScript, **46 files / 304 tests**, production build. The 309,468-byte ZIP was inspected: full-tab options, current collector host, no local-preview bypass, server credentials, source maps or environment files.
+
+- Signup uses one email field and Enter, with collection consent disclosed beside the field. The actual presentation component sits inert and blurred behind it; the protected runtime and AI frames remain unmounted until access succeeds.
+- Top-frame YouTube content scripts can submit a consented signup; the response never returns the saved email. Deletion and private API management remain restricted to extension pages.
+- Browser fixture checks: Enter unlocks, reload preserves access, removal restores the gate. Dark wide and light narrow views inspected. Fixture collection is synthetic, not proof of hosted collection.
+- Settings use the same icon and neutral controls, one layout, a compact saved-account row, and a full Chrome tab.
+- The owner's existing `.output/local-test-1.0.1` folder is updated separately with the UI and a clearly labeled **1.0.3 local preview**. It retains local-only email storage, including an already-entered email; it is not the public collection candidate and must not be submitted.
+- Hosted collection and all unperformed release gates remain pending. No production bypass is included.
+
+## Prior candidate: 1.0.2, private email collection
 
 Owner-approved scope now collects emails after an explicit checkbox through Cloudflare into private GitHub Issues. The private repo and deployed Worker exist. The collector reports unconfigured until a repo-restricted GitHub key is installed. It returns 503 for signup rather than falsely claiming collection.
 

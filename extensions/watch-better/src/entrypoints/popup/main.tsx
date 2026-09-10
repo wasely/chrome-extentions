@@ -1,7 +1,7 @@
 import { StrictMode, useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { browser } from 'wxt/browser';
-import { AccountPanel } from '@/features/auth/AccountPanel';
+import { AccessGate } from '@/features/auth/AccessGate';
 
 import {
   PopupView,
@@ -139,7 +139,7 @@ function Popup() {
   };
 
   return (
-    <>
+    <AccessGate emailEntry theme={resolvedTheme}>
       <PopupView
         busyAction={busyAction}
         error={hasError}
@@ -149,8 +149,7 @@ function Popup() {
         status={status}
         theme={resolvedTheme}
       />
-      <AccountPanel />
-    </>
+    </AccessGate>
   );
 }
 

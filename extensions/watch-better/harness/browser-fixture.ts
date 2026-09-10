@@ -1,22 +1,39 @@
 // Harness only. Never import this adapter from production code.
 import { AuthService } from '@/features/auth/auth-service';
 const listeners = new Set<(message: unknown) => void>();
-const values: Record<string, unknown> = {};
+const values: Record<string, unknown> = JSON.parse(
+  sessionStorage.getItem('wb-harness-signup') ?? '{}',
+) as Record<string, unknown>;
 const access = new AuthService(
   {
     get: (key) => Promise.resolve({ [key]: values[key] }),
     set: (data) => {
       Object.assign(values, data);
+      sessionStorage.setItem('wb-harness-signup', JSON.stringify(values));
       return Promise.resolve();
     },
     remove: (key) => {
       delete values[key];
+      sessionStorage.setItem('wb-harness-signup', JSON.stringify(values));
       return Promise.resolve();
     },
   },
   { save: () => Promise.resolve(), remove: () => Promise.resolve() },
 );
 export const browser = {
+  storage: {
+    local: {
+      get: (key: string) => Promise.resolve({ [key]: values[key] }),
+      set: (data: Record<string, unknown>) => {
+        Object.assign(values, data);
+        return Promise.resolve();
+      },
+      remove: (key: string) => {
+        delete values[key];
+        return Promise.resolve();
+      },
+    },
+  },
   runtime: {
     sendMessage: async (request: {
       type: string;

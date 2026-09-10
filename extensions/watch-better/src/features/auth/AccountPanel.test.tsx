@@ -16,15 +16,10 @@ describe('email-only onboarding', () => {
         onUnlocked={onUnlocked}
       />,
     );
-    expect(screen.getByText(/stored privately in GitHub/i)).toBeVisible();
+    expect(screen.getByText(/By continuing/i)).toBeVisible();
     await user.type(screen.getByLabelText('Email address'), 'viewer@example.com');
-    await user.click(
-      screen.getByRole('checkbox', { name: /agree to share my email/i }),
-    );
-    await user.click(screen.getByRole('button', { name: 'Continue' }));
-    expect(
-      await screen.findByRole('heading', { name: 'You have full access' }),
-    ).toBeVisible();
+    await user.keyboard('{Enter}');
+    expect(await screen.findByRole('heading', { name: 'Full access' })).toBeVisible();
     expect(screen.queryByLabelText(/code/i)).toBeNull();
     expect(onUnlocked).toHaveBeenCalledOnce();
     expect(request).toHaveBeenCalledExactlyOnceWith({
@@ -45,10 +40,7 @@ describe('email-only onboarding', () => {
       />,
     );
     await user.type(screen.getByLabelText('Email address'), 'viewer@example.com');
-    await user.click(
-      screen.getByRole('checkbox', { name: /agree to share my email/i }),
-    );
-    await user.click(screen.getByRole('button', { name: 'Continue' }));
+    await user.keyboard('{Enter}');
     expect(await screen.findByRole('alert')).toHaveTextContent('Could not save email.');
     expect(onUnlocked).not.toHaveBeenCalled();
     expect(screen.getByRole('button', { name: 'Continue' })).toBeEnabled();

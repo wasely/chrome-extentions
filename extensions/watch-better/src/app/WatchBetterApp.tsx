@@ -27,6 +27,7 @@ export type ResolvedTheme = 'dark' | 'light';
 export type PanelReadiness = 'loading' | 'ready' | 'unavailable';
 
 export interface WatchBetterAppProps {
+  readonly preview?: boolean;
   readonly theme?: ResolvedTheme;
   readonly initialTab?: PanelTab;
   readonly activeTab?: PanelTab;
@@ -98,6 +99,7 @@ export function WatchBetterApp({
   transcriptFontSize = 'standard',
   videoTitle,
   allowCollapse = true,
+  preview = false,
   presentation = 'panel',
   minimized = false,
   onMinimizedChange,
@@ -253,6 +255,7 @@ export function WatchBetterApp({
       >
         <header className="ct-header">
           <div className="ct-identity">
+            <BrandLogo className="ct-header__logo" />
             <div className="ct-identity__copy">
               <strong>{quickLearnMode ? 'Quick Learn' : 'Watch Better'}</strong>
               {videoTitle ? (
@@ -415,12 +418,14 @@ export function WatchBetterApp({
           role="tabpanel"
           tabIndex={activeTab === 'ask' ? 0 : -1}
         >
-          <AskExperience
-            {...askProps}
-            focused={askFocused}
-            onFocusedChange={setAskFocus}
-            visible={!collapsed && !minimized && activeTab === 'ask'}
-          />
+          {!preview && (
+            <AskExperience
+              {...askProps}
+              focused={askFocused}
+              onFocusedChange={setAskFocus}
+              visible={!collapsed && !minimized && activeTab === 'ask'}
+            />
+          )}
         </div>
         {presentation === 'panel' ? (
           <div

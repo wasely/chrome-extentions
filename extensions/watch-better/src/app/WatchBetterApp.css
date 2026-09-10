@@ -787,3 +787,10 @@
     white-space: normal;
   }
 }
+
+.ct-header__logo {
+  width: 28px;
+  height: 28px;
+  flex: 0 0 auto;
+  border-radius: 7px;
+}

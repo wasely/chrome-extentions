@@ -2,7 +2,7 @@
 
 YouTube captions, transcript search, timestamp navigation, Quick Learn, AI questions, and experimental Smart Skip in a desktop Chrome extension.
 
-**1.0.2 release candidate; not submitted to the Chrome Web Store.** Collector activation, public links and live browser checks are still required. See [release status](docs/RELEASE_STATUS.md).
+**1.0.3 release candidate; not submitted to the Chrome Web Store.** Collector activation, public links and live browser checks are still required. See [release status](docs/RELEASE_STATUS.md).
 
 ## Public experience
 
@@ -26,7 +26,7 @@ npm run validate
 npm run build
 ```
 
-Load `.output/chrome-mv3` through `chrome://extensions` → Developer mode → Load unpacked. Configure the public collector URL, enter an email in Options, agree to collection, and select Continue. No domain or DNS setup is required. See [email entry](docs/EMAIL_SETUP.md). This signup does not verify identity. The collector needs a server-only GitHub key; never put that key into the extension. Never bundle or commit personal API keys.
+Load `.output/chrome-mv3` through `chrome://extensions` → Developer mode → Load unpacked. Configure the public collector URL, open a YouTube video, enter an email over the blurred panel, and press Enter to agree to the visible collection disclosure. No domain or DNS setup is required. See [email entry](docs/EMAIL_SETUP.md). This signup does not verify identity. The collector needs a server-only GitHub key; never put that key into the extension. Never bundle or commit personal API keys.
 
 ```powershell
 npm run zip           # local review candidate, not proof of release readiness

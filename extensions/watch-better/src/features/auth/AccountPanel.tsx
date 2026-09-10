@@ -5,22 +5,25 @@ import {
   subscribePublicChanges,
   type PublicRequest,
 } from '@/messaging/public-client';
+import { BrandLogo } from '@/components/BrandLogo';
+import { Icon } from '@/components/Icon';
 import './AccountPanel.css';
 
 export interface AccountPanelProps {
   readonly initialStatus?: AuthStatus;
+  readonly inline?: boolean;
   readonly request?: (request: PublicRequest) => Promise<AuthStatus>;
   readonly onUnlocked?: () => void;
 }
 export function AccountPanel({
   initialStatus,
+  inline = false,
   request = publicRequest,
   onUnlocked,
 }: AccountPanelProps) {
   const id = useId();
   const [status, setStatus] = useState<AuthStatus | null>(initialStatus ?? null);
   const [email, setEmail] = useState('');
-  const [consent, setConsent] = useState(false);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState(false);
@@ -57,7 +60,6 @@ export function AccountPanel({
         throw new Error('Could not save email. Please try again.');
       setStatus(next);
       setEmail('');
-      setConsent(false);
       if (next.kind === 'unlocked') onUnlocked?.();
       else setMessage('Your signup email has been deleted.');
     } catch (failure) {
@@ -76,26 +78,31 @@ export function AccountPanel({
   };
 
   return (
-    <section className="wb-account" aria-labelledby={`${id}-title`}>
-      <span className="wb-account__eyebrow">Watch Better</span>
+    <section
+      className={`wb-account${status?.kind === 'unlocked' ? ' wb-account--unlocked' : ''}`}
+      aria-labelledby={`${id}-title`}
+    >
+      {status?.kind !== 'unlocked' && (
+        <div className="wb-account__brand">
+          <BrandLogo />
+          <span>Watch Better</span>
+        </div>
+      )}
       <h2 id={`${id}-title`}>
         {status?.kind === 'unlocked'
-          ? 'You have full access'
-          : 'Your email. Full access.'}
+          ? 'Full access'
+          : 'Enter your email to get started.'}
       </h2>
       {status === null ? (
         <p role="status">Checking access…</p>
       ) : status.kind === 'unlocked' ? (
         <>
           <p>{status.email}</p>
-          <p>
-            Your signup email is stored privately in GitHub. Remove it to delete your
-            signup, reset access, and disconnect personal APIs.
-          </p>
           <div className="wb-account__actions">
             <button
               type="button"
               disabled={busy}
+              title="Delete your signup and reset access"
               onClick={() => void act({ type: 'public:sign-out' })}
             >
               {busy ? 'Please wait…' : 'Remove email'}
@@ -104,54 +111,52 @@ export function AccountPanel({
         </>
       ) : (
         <>
-          <p>
-            Enter your email to unlock every feature. No verification code, password, or
-            subscription.
-          </p>
           <form
             onSubmit={(event) => {
               event.preventDefault();
-              void act({ type: 'public:enter-email', email, consent });
+              if (!busy) void act({ type: 'public:enter-email', email, consent: true });
             }}
           >
-            <label htmlFor={`${id}-email`}>Email address</label>
-            <input
-              id={`${id}-email`}
-              type="email"
-              autoComplete="email"
-              required
-              maxLength={254}
-              value={email}
-              disabled={busy}
-              onChange={(event) => setEmail(event.target.value)}
-              placeholder="you@example.com"
-            />
-            <label className="wb-account__consent">
-              <input
-                type="checkbox"
-                required
-                checked={consent}
-                disabled={busy}
-                onChange={(event) => setConsent(event.target.checked)}
-              />
-              <span>
-                I agree to share my email with Watch Better for signup records.
-              </span>
+            <label className="wb-account__sr-only" htmlFor={`${id}-email`}>
+              Email address
             </label>
-            <button className="wb-account__primary" type="submit" disabled={busy}>
-              {busy ? 'Please wait…' : 'Continue'}
-            </button>
+            <div className="wb-account__entry">
+              <input
+                id={`${id}-email`}
+                type="email"
+                autoComplete="email"
+                autoCapitalize="none"
+                spellCheck={false}
+                aria-describedby={`${id}-disclosure`}
+                required
+                maxLength={254}
+                value={email}
+                disabled={busy}
+                onChange={(event) => setEmail(event.target.value)}
+                placeholder="you@example.com"
+              />
+              <button
+                className="wb-account__primary"
+                type="submit"
+                disabled={busy}
+                aria-label="Continue"
+                title="Continue (Enter)"
+              >
+                {busy ? '…' : <Icon name="arrow-right" />}
+              </button>
+            </div>
           </form>
-          <small>
-            Your email is sent securely through Cloudflare and stored privately in
-            GitHub for up to one year. No verification or marketing emails.
+          <small id={`${id}-disclosure`}>
+            By continuing, you agree to let Watch Better collect your email for signup.
+            No verification. No marketing emails.
           </small>
         </>
       )}
-      {status?.kind === 'signed-out' && status.pending ? (
+      {!inline && status?.kind === 'signed-out' && status.pending ? (
         <button
           type="button"
           disabled={busy}
+          title="Delete your signup and reset access"
           onClick={() => void act({ type: 'public:sign-out' })}
         >
           Remove pending signup
@@ -173,13 +178,15 @@ export function AccountPanel({
         >
           Privacy
         </a>
-        <a
-          href="https://github.com/wasely/chrome-extentions/issues"
-          target="_blank"
-          rel="noreferrer"
-        >
-          Support
-        </a>
+        {!inline && (
+          <a
+            href="https://github.com/wasely/chrome-extentions/issues"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Support
+          </a>
+        )}
       </footer>
     </section>
   );

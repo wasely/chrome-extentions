@@ -11,6 +11,6 @@ describe('BrandLogo', () => {
     expect(logo).toHaveStyle({
       objectFit: 'contain',
     });
-    expect(logo.getAttribute('src')).toContain('data:image/svg+xml');
+    expect(logo.getAttribute('src')).toMatch(/128\.png|data:image\/png/);
   });
 });

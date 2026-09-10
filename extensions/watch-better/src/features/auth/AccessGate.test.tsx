@@ -33,10 +33,11 @@ describe('feature access gate', () => {
       </AccessGate>,
     );
     expect(screen.queryByText('Protected feature')).toBeNull();
-    await screen.findByText('Enter your email. Unlock everything.');
+    await screen.findByText('Enter your email to get started.');
     expect(visible).toHaveBeenCalledWith(true);
     expect(screen.getByRole('link', { name: 'Privacy' })).toBeVisible();
-    expect(screen.getByRole('button', { name: 'Turn off Watch Better' })).toBeVisible();
+    expect(document.querySelector('.wb-access__preview')).toHaveAttribute('inert');
+    expect(document.querySelector('iframe')).toBeNull();
     state.request.mockRejectedValue(new Error('offline'));
     await act(async () => {
       state.changed();
@@ -51,7 +52,7 @@ describe('feature access gate', () => {
         <button>Protected feature</button>
       </AccessGate>,
     );
-    await screen.findByText('Enter your email. Unlock everything.');
+    await screen.findByText('Enter your email to get started.');
     state.request.mockResolvedValue({ kind: 'unlocked', email: '' });
     await act(async () => {
       state.changed();

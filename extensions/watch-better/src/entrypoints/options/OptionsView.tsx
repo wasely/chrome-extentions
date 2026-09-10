@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { BrandLogo } from '@/components/BrandLogo';
 import { Icon } from '@/components/Icon';
 import { resolveInitialProductTab } from '@/config/product-features';
@@ -20,6 +21,8 @@ import './OptionsView.css';
 export type OptionsTheme = 'dark' | 'light';
 
 export interface OptionsViewProps {
+  readonly account?: ReactNode;
+  readonly advanced?: ReactNode;
   readonly settings: WatchBetterSettings;
   readonly status: string;
   readonly theme?: OptionsTheme;
@@ -30,6 +33,8 @@ export interface OptionsViewProps {
 }
 
 export function OptionsView({
+  account,
+  advanced,
   settings,
   status,
   theme = 'light',
@@ -63,6 +68,7 @@ export function OptionsView({
           <Icon name="external" />
         </button>
       </header>
+      {account && <div className="ct-options__account">{account}</div>}
 
       <section aria-labelledby="general-title" className="ct-options-card">
         <div className="ct-options-card__heading">
@@ -352,6 +358,7 @@ export function OptionsView({
         </p>
       </section>
 
+      {advanced && <div className="ct-options__account">{advanced}</div>}
       <footer aria-live="polite" className="ct-options__status">
         {status}
       </footer>
