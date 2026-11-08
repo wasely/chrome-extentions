@@ -1,3 +1,9 @@
+> [!NOTE]
+> **This copy is archived. The maintained project lives at [blixvip/watch-better](https://github.com/blixvip/watch-better).**
+> Issues, releases and pull requests all happen there. Contributors are welcome:
+> see its [good first issues](https://github.com/blixvip/watch-better/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22)
+> and the [Discord](https://discord.gg/grokbot).
+
 # Chrome extensions
 
 [Watch Better](extensions/watch-better) adds captions, transcript search, timestamp navigation, AI questions, Quick Learn, and experimental Smart Skip to desktop YouTube.
